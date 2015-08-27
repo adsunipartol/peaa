@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="ProjetoPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <non-jta-data-source>jdbc/_exemplo</non-jta-data-source>
+    <class>br.peaa.entidades.Curso</class>
+    <class>br.peaa.entidades.Entidade</class>
+    <class>br.peaa.entidades.Cidade</class>
+    <class>br.peaa.entidades.Endereco</class>
+    <class>br.peaa.entidades.Estado</class>
+    <class>br.peaa.entidades.Evento</class>
+    <class>br.peaa.entidades.Turma</class>
+    <class>br.peaa.entidades.SubEvento</class>
+    <class>br.peaa.entidades.Perfil</class>
+    <class>br.peaa.entidades.Usuario</class>
+    <class>br.peaa.entidades.Pessoa</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.format_sql" value="false"/>
+      <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+    </properties> 
+  </persistence-unit>
+</persistence>

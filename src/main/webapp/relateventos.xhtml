@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="layout/template.xhtml">
+        <ui:define name="tela">
+            <h2>Relatorio de Eventos<span></span></h2>
+        </ui:define>
+        <ui:define name="content">
+            <h:form style="margin-bottom: 0px !important;" class="form-horizontal">
+                <div class="form-group">
+                    <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="CURSO"></h:outputText>
+                    <div class="col-sm-5">
+                        <h:selectOneMenu>
+                            <f:selectItems value="#{cursoMB.cursosSelecao}"/>
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="TURMA"></h:outputText>
+                    <div class="col-sm-5">
+                        <h:selectOneMenu>
+                            <f:selectItem itemLabel="--Todas--"/>
+                            <f:selectItems />
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="ANO"></h:outputText>
+                    <div class="col-sm-2">
+                        <h:inputText class="form-control"  />
+                    </div>
+                </div>
+                <div class="spacer spacer-bottom" align="center" style="padding-top: 20px">
+                    <h:commandButton type="submit" class="btn btn-success btn-rad"  value="Gerar Relatorio"/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <p></p>
+                <h:messages class="alert alert-success" style="list-style: none; font-weight: 500"/>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
