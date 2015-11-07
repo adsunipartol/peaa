@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:composition template="/layout/layout.xhtml">
+        <ui:define name="tela">
+            <h2>Cadastro de Curso</h2>
+        </ui:define>
+        <ui:define name="content">
+            <script>
+                window.onload = function () {
+                    $('#cadcurso').validate({
+                        rules: {
+                            "cadcurso:nomeCurso": {required: true},
+                            "cadcurso:seriesCurso": {required: true},
+                            "cadcurso:entidadeCurso": {required: true},
+                            "cadcurso:turnoCurso": {required: true}
+                        },
+                        messages: {
+                            "cadcurso:nomeCurso": "Obrigatório!",
+                            "cadcurso:seriesCurso": "Obrigatório!",
+                            "cadcurso:entidadeCurso": "Obrigatório!",
+                            "cadcurso:turnoCurso": "Obrigatório!"
+                        },
+                        highlight: function (element) {
+                            $(element).closest('.form-group').addClass('has-error');
+                        },
+                        unhighlight: function (element) {
+                            $(element).closest('.form-group').removeClass('has-error');
+                        },
+                        errorElement: 'span',
+                        errorClass: 'help-block',
+                        errorPlacement: function (error, element) {
+                            if (element.parent('.input-group').length) {
+                                error.insertAfter(element.parent());
+                            } else {
+                                error.insertAfter(element);
+                            }
+                        }
+                    });
+                    var msg = $("#msgAlerta li");
+                    $.each(msg, function () {
+                        var tipo = $(this).attr("class").split("-")[0];
+                        if (this.innerHTML.length > 0)
+                            $.notify({message: this.innerHTML}, {type: tipo, timer: (tipo === "danger" ? 100000 : 5000)});
+                    });
+                };
+            </script>
+            <h:form id="cadcurso" style="margin-bottom: 0px !important;" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <h:outputText class="col-cad-evento control-label" value="CODIGO"></h:outputText>
+                        <h:inputText  class="form-control" disabled="true"  value="#{CursoMB.curso.codigo}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <h:outputText  class="col-cad-evento control-label" value="NOME *"></h:outputText>
+                        <h:inputText id="nomeCurso" class="form-control"  value="#{CursoMB.curso.nome}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4" >
+                        <h:outputText class="col-cad-evento control-label" value="SERIES"></h:outputText>
+                        <h:selectOneMenu value="#{CursoMB.curso.numSeries}" class="form-control" id="seriesCurso">
+                            <f:selectItem itemValue="" itemLabel="Selecione"/>
+                            <f:selectItem itemValue="3" itemLabel="3"/>
+                            <f:selectItem itemValue="4" itemLabel="4"/>
+                            <f:selectItem itemValue="5" itemLabel="5"/>
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4" >
+                        <h:outputText class="col-cad-evento control-label" value="ENTIDADE"></h:outputText>
+                        <h:selectOneMenu value="#{CursoMB.curso.entidade}" class="form-control" converter="converterEntidade" id="entidadeCurso">
+                            <f:selectItems value="#{CursoMB.entidadesSelecao}"/>
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4" >
+                        <h:outputText class="col-cad-evento control-label" value="TURNO"></h:outputText>
+                        <h:selectOneMenu value="#{CursoMB.curso.turno}" class="form-control" id="turnoCurso">
+                            <f:selectItem itemValue="" itemLabel="Selecione"/>
+                            <f:selectItems value="#{CursoMB.turnoSelecao}"/>
+                        </h:selectOneMenu>
+                    </div>
+                </div>
+
+                <c:if test="#{CursoMB.editando == true}"><div id="geraturmas" style="width: 500px; height: 100px; background-color: #f1f1fd; 
+                                                              -webkit-border-radius: 5px">
+                        <div class="form-group">
+                            <h:outputText class="col-cad-evento control-label" style="float: left" value="ANO"></h:outputText>
+                            <div class="col-sm-4">
+                                <h:inputText id="ano" class="form-control" value="#{CursoMB.anoTurma}">
+                                    <f:validateLength minimum="4" maximum="4"></f:validateLength>
+                                </h:inputText>
+                            </div>                    
+                            <h:commandButton value="Gerar turmas do ano corrente" action="#{CursoMB.gerarTurmas()}" class="btn btn-info btn-flat"/>
+                        </div>
+                    </div>
+                </c:if>
+
+                <div class="col-sm-4 spacer spacer-bottom" align="center" style="padding-top: 20px">
+                    <h:commandButton  class="btn btn-success btn-rad" action="#{CursoMB.criar()}" value="Salvar"></h:commandButton>
+                    <span>&nbsp; &nbsp; &nbsp;</span>
+                    <h:link class="btn btn-default btn-rad" outcome="curso.xhtml" value="Voltar"></h:link>
+                    <div id="msgAlerta" style="display: none;">
+                        <h:messages id="msgAlerta" errorClass="danger" infoClass="success" warnClass="warning"/>
+                    </div>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

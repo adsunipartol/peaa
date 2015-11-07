@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>PEAA - Login de Acesso</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,400italic,700,800' rel='stylesheet' type='text/css'/>
+        <link href='http://fonts.googleapis.com/css?family=Raleway:300,200,100' rel='stylesheet' type='text/css'/>
+        <link href="resources/js/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="resources/fonts/font-awesome-4/css/font-awesome.css"/><!--Necessário para Icones-->
+        <link href="resources/css/style.css" rel="stylesheet" />
+        <script>
+            window.onload = function () {
+                $('#loginForm').validate({
+                    rules: {
+                        "loginForm:username": {
+                            required: true
+                        },
+                        "loginForm:password": {
+                            required: true
+                        }
+                    },
+                    messages: {
+                        "loginForm:username": "Obrigatório!",
+                        "loginForm:password": "Obrigatório!"
+                    },
+                    highlight: function (element) {
+                        $(element).closest('.form-group').addClass('has-error');
+                    },
+                    unhighlight: function (element) {
+                        $(element).closest('.form-group').removeClass('has-error');
+                    },
+                    errorElement: 'span',
+                    errorClass: 'help-block',
+                    errorPlacement: function (error, element) {
+                        if (element.parent('.input-group').length) {
+                            error.insertAfter(element.parent());
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    }
+                });                
+                var msg = $("#msgAlerta li");
+                $.each(msg, function () {
+                    var tipo = $(this).attr("class").split("-")[0];
+                    if (this.innerHTML.length > 0)
+                        $.notify({message: this.innerHTML}, {type: tipo, timer: (tipo === "danger" ? 100000 : 5000)});
+                });
+            };
+        </script>
+    </h:head>
+    <h:body>
+        <f:view>
+            <h:form style="margin-bottom: 0px !important;" class="form-horizontal" id="loginForm">
+                <div id="cl-wrapper" class="login-container">
+                    <div class="middle-login">
+                        <div class="block-flat">
+                            <div class="header">							
+                                <h3 class="text-center"><img class="logo-img" src="resources/images/logo.png" alt="logo"/></h3>
+                            </div>
+                            <div>
+                                <div class="content">
+                                    <h4 class="title">Login de Acesso</h4>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-user"/></span>
+                                                <h:inputText id="username" value="#{LoginMB.usuario}" class="form-control" pt:placeholder="Usuário"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock"/></span>
+                                                <h:inputSecret  id="password" value="#{LoginMB.senha}" class="form-control" pt:placeholder="Senha"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="msgAlerta" style="display: none;">
+                                        <h:messages id="msgAlerta" errorClass="danger" infoClass="success" warnClass="warning"/>
+                                    </div>
+                                </div>
+                                <div class="foot">
+                                    <h:commandLink value="Não tenho cadastro" action="cadastropessoa?faces-redirect=true" class="btn btn-default"/>
+                                    <h:commandButton type="submit" value="Login" class="btn btn-primary" action="#{LoginMB.login()}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center out-links"><a href="#"> PEAA - Plataforma de Ensino e Apoio Academico</a></div>
+                    </div>
+                </div>
+            </h:form>
+        </f:view>
+        <ui:include src="layout/scripts.xhtml"/>
+    </h:body>
+</html>
+

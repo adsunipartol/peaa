@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="layout/layout.xhtml">
+        <ui:define name="tela">
+            <h2>Cadastro de Entidade de Ensino</h2>
+        </ui:define>
+            <ui:define name="content" >
+                <script>
+                    window.onload = function () {
+                        $('#entidadeForm\\:cepEntidade').mask('00000-000');
+                        $('#entidadeForm\\:numeroEntidade').mask('00000000');
+                        $('#entidadeForm').validate({
+                            rules: {
+                                "entidadeForm:nomeEntidade": {required: true},
+                                "entidadeForm:unidadeEntidade": {required: true},
+                                "entidadeForm:descricaoEntidade": {required: true},
+                                "entidadeForm:estadoEntidade": {required: true},
+                                "entidadeForm:cidadeEntidade": {required: true},
+                                "entidadeForm:cepEntidade": {required: true},
+                                "entidadeForm:bairroEntidade": {required: true},
+                                "entidadeForm:ruaEntidade": {required: true},
+                                "entidadeForm:numeroEntidade": {required: true, digits: true}
+                            },
+                            messages: {
+                                "entidadeForm:nomeEntidade": "Obrigatório!",
+                                "entidadeForm:unidadeEntidade": "Obrigatório!",
+                                "entidadeForm:descricaoEntidade": "Obrigatório!",
+                                "entidadeForm:estadoEntidade": "Obrigatório!",
+                                "entidadeForm:cidadeEntidade": "Obrigatório!",
+                                "entidadeForm:cepEntidade": "Obrigatório!",
+                                "entidadeForm:bairroEntidade": "Obrigatório!",
+                                "entidadeForm:ruaEntidade": "Obrigatório!",
+                                "entidadeForm:numeroEntidade": {
+                                    required: "Obrigatório!",
+                                    digits: "Somente números!"
+                                },
+                            },
+                            highlight: function (element) {
+                                $(element).closest('.form-group').addClass('has-error');
+                            },
+                            unhighlight: function (element) {
+                                $(element).closest('.form-group').removeClass('has-error');
+                            },
+                            errorElement: 'span',
+                            errorClass: 'help-block',
+                            errorPlacement: function (error, element) {
+                                if (element.parent('.input-group').length) {
+                                    error.insertAfter(element.parent());
+                                } else {
+                                    error.insertAfter(element);
+                                }
+                            }
+                        });
+                        var msg = $("#msgAlerta li");
+                        $.each(msg, function () {
+                            var tipo = $(this).attr("class").split("-")[0];
+                            if (this.innerHTML.length > 0)
+                                $.notify({message: this.innerHTML}, {type: tipo, timer: (tipo === "danger" ? 100000 : 5000)});
+                        });
+                    };
+                </script>
+                <h:form style="margin-bottom: 0px !important;" class="form-horizontal" id="entidadeForm">
+                    <div id="msgAlerta" style="display: none;">
+                        <h:messages id="msgAlerta" errorClass="danger" infoClass="success" warnClass="warning"/>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            <h:outputText class="col-cad-evento control-label" value="CODIGO"></h:outputText>
+                            <h:inputText class="form-control" disabled="true"  value="#{entidadeMB.entidade.codigo}"/>
+                        </div>
+                        <div class="col-sm-5">
+                            <h:outputText class="col-cad-evento control-label" value="NOME *"></h:outputText>
+                            <h:inputText  class="form-control" required="true" value="#{entidadeMB.entidade.nome}" id="nomeEntidade"/>
+                        </div>
+                        <div class="col-sm-5">
+                            <h:outputText class="col-cad-evento control-label" value="UNIDADE *" ></h:outputText>
+                            <h:inputText  class="form-control" required="true" value="#{entidadeMB.entidade.unidade}" id="unidadeEntidade"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-5" >
+                            <h:outputText class="col-cad-evento control-label" value="DESCRIÇÃO" ></h:outputText>
+                            <h:inputTextarea  class="form-control" value="#{entidadeMB.entidade.descricao}" id="descricaoEntidade" />
+                        </div>
+                        <!--ENTRADA PARA UF-->  
+                        <div class="col-sm-3">
+                            <h:outputText styleClass="col-cad-evento control-label" value="ESTADO"></h:outputText>
+                            <h:selectOneMenu id="estadoEntidade" styleClass="form-control" value="#{RegiaoMB.estado.codigo}">
+                                <f:selectItem itemValue="" itemLabel="Selecione..." />
+                                <f:selectItems value="#{RegiaoMB.buscarEstados()}"/>
+                                <f:ajax event="change" render="cidadeEntidade"  listener="#{RegiaoMB.limparCidades()}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <!--ENTRADA PARA CIDADE-->
+                        <div class="col-sm-3">
+                            <h:outputText styleClass="col-cad-evento control-label" value="CIDADE"></h:outputText>
+                            <h:selectOneMenu id="cidadeEntidade" styleClass="form-control" value="#{RegiaoMB.cidade.codigo}">
+                                <f:selectItem itemValue="" itemLabel="Selecione..." />
+                                <f:selectItems value="#{RegiaoMB.cidades}" var="cidade" itemValue="#{cidade.codigo}" itemLabel="#{cidade.descricao}"/>
+                            </h:selectOneMenu>
+                        </div>
+                    </div>                
+                    <!--ENTRADA PARA CEP-->
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <h:outputText styleClass="col-cad-evento control-label" value="CEP"></h:outputText>
+                            <h:inputText styleClass="form-control" id="cepEntidade" value="#{entidadeMB.endereco.cep}"/>
+                        </div>
+                        <!--ENTRADA PARA BAIRRO-->
+                        <div class="col-sm-3">
+                            <h:outputText styleClass="col-cad-evento control-label" value="BAIRRO"></h:outputText>
+                            <h:inputText styleClass="form-control"  value="#{entidadeMB.endereco.bairro}" id="bairroEntidade"/>
+                        </div>
+                        <!--ENTRADA PARA RUA-->
+                        <div class="col-sm-3">
+                            <h:outputText styleClass="col-cad-evento control-label" value="RUA"></h:outputText>
+                            <h:inputText styleClass="form-control" id="ruaEntidade" value="#{entidadeMB.endereco.rua}"/>
+                        </div>
+                        <!--FIM-->
+                        <!--ENTRADA PARA NUMERO-->
+                        <div class="col-sm-3">
+                            <h:outputText styleClass="col-cad-evento control-label" value="NUMERO"></h:outputText>
+                            <h:inputText styleClass="form-control" id="numeroEntidade" value="#{entidadeMB.endereco.numero}"/>
+                        </div>
+                    </div>
+                    <!--FIM-->
+                    <div class="spacer spacer-bottom" align="center" style="padding-top: 20px">
+                        <h:commandButton type="submit" class="btn btn-success btn-rad" action="#{entidadeMB.criar()}" value="Salvar"/>
+                        &nbsp;&nbsp;&nbsp;
+                        <h:link value="Voltar" outcome="entidade.xhtml" class="btn btn-default"/>
+                    </div>
+                </h:form>
+            </ui:define>
+    </ui:composition>
+</html>

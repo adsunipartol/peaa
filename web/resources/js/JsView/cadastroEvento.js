@@ -1,0 +1,4 @@
+    function abreDataPicker(){
+        $('.datepicker').datepicker()
+    };
+        
