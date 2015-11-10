@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="layout/layout.xhtml">
+        <ui:define name="tela">
+            <h2>Partipantes - <span> #{eventoMB.evento.nome} </span></h2>
+        </ui:define>
+        <ui:define name="content">
+            <h:form style="margin-bottom: 0px !important;" class="form-horizontal">
+                <div class="panel-body">
+                    <!-- TABELA DOS EVENTOS -->
+                    <h:dataTable value="#{eventoMB.participantesEVT}"
+                                 var="p" 
+                                 class="table table-bordered" id="datatable">
+                        <h:column> 
+                            <f:facet name="header">CODIGO</f:facet>
+                                #{p.codigo}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">TIPO</f:facet>
+                                #{p.tipo}
+                        </h:column>
+                        <h:column>    				
+                            <f:facet name="header">NOME</f:facet>    				
+                                #{p.nome}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">MATRICULA</f:facet>
+                                #{p.ra}
+                        </h:column>
+                    </h:dataTable>
+                    <!--TABELA DOS EVENTOS-->   
+                </div>
+                <div class="spacer spacer-bottom" align="center" style="padding-top: 20px">
+                    <h:link value="Voltar" outcome="evento.xhtml" class="btn btn-default"/>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
