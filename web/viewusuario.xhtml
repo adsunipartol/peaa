@@ -6,6 +6,11 @@
       xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Editar Usuario <span> - #{usuarioMB.usuario.login}</span></h2>
         </ui:define>
@@ -46,7 +51,7 @@
                 <div class="form-group">
                     <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="SENHA"></h:outputText>
                     <div class="col-sm-5" >
-                        <h:inputSecret  class="form-control" value="#{pessoaMB.senhaTmp}" />
+                        <h:inputSecret  class="form-control" value="#{pessoaMB.user.senha}" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -56,7 +61,7 @@
                     </div>
                 </div>
                 <div class="spacer spacer-bottom" align="center" style="padding-top: 20px">
-                    <h:commandButton type="submit" class="btn btn-success btn-rad" action="#{pessoaMB.criar()}" value="Salvar"/>
+                    <h:commandButton type="submit" class="btn btn-success btn-rad" action="#{pessoaMB.salvarUsuario(pessoaMB.pessoa)}" value="Salvar"/>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <h:link value="Voltar" outcome="pessoa.xhtml" class="btn btn-default"/>
                     <div id="msgAlerta" style="display: none;">

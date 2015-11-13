@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Relatorio de Cursos<span></span></h2>
         </ui:define>
@@ -23,9 +28,9 @@
                 <div class="form-group">
                     <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="ENTIDADE"></h:outputText>
                     <div class="col-sm-5">
-                        <h:selectOneMenu>
+                        <h:selectOneMenu converter="converterEntidade">
                             <f:selectItem itemLabel="--Todas--"/>
-                            <f:selectItems value="#{entidadeMB.entidades}"/>
+                            <f:selectItems value="#{entidadeMB.entidadesSelecao}"/>
                         </h:selectOneMenu>
                     </div>
 

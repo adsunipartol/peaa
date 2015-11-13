@@ -27,15 +27,31 @@ public class EntidadeManagedBean implements Serializable {
     private Estado estado;
     private Cidade cidade;
     private List<Entidade> entidades;
+    private List<Entidade> entidadesSelecao;
     private EntidadeDAO entidadedao;
     private EstadoDAO estadodao;
+    private String paramBusca;
 
     @ManagedProperty(value = "#{RegiaoMB}")
     private RegiaoManagedBean regiaoMB;
 
     public EntidadeManagedBean() {
+        entidade = new Entidade();
+        endereco = new Endereco();
+        estado = new Estado();
+        cidade = new Cidade();
+        entidades = new ArrayList<Entidade>();
         entidadedao = new EntidadeDAO();
         estadodao = new EstadoDAO();
+        paramBusca = "";
+    }
+
+    public String getParamBusca() {
+        return paramBusca;
+    }
+
+    public void setParamBusca(String paramBusca) {
+        this.paramBusca = paramBusca;
     }
 
     public Entidade getEntidade() {
@@ -51,11 +67,31 @@ public class EntidadeManagedBean implements Serializable {
         this.entidade = entidade;
     }
 
+    public List<Entidade> getEntidadesSelecao() {
+        return entidadesSelecao = (List<Entidade>) entidadedao.buscarTodos();
+    }
+
+    public void setEntidadesSelecao(List<Entidade> entidadesSelecao) {
+        this.entidadesSelecao = entidadesSelecao;
+    }
+
     public String novo() {
+        paramBusca = "";
         entidade = new Entidade();
         endereco = new Endereco();
         regiaoMB.setEstado(new Estado());
         regiaoMB.setCidade(new Cidade());
+        return "cadastroentidade.xhtml";
+    }
+    
+    public String editar(Entidade entidade) {
+        paramBusca = "";
+        this.entidade = entidade;
+        this.endereco = entidade.getEndereco();
+        this.regiaoMB.setEstado(entidade.getEndereco().getCidade().getEstado());
+        this.regiaoMB.setCidades(null);
+        this.regiaoMB.getCidades();
+        this.regiaoMB.setCidade(entidade.getEndereco().getCidade());
         return "cadastroentidade.xhtml";
     }
 
@@ -70,6 +106,7 @@ public class EntidadeManagedBean implements Serializable {
     public void criar() {
         if (entidade.getCodigo() == null) {
             try {
+                endereco.setCidade(regiaoMB.getCidade());
                 entidade.setEndereco(endereco);
                 entidadedao.iniciarTransacao();
                 entidadedao.salvar(entidade);
@@ -89,18 +126,10 @@ public class EntidadeManagedBean implements Serializable {
         }
     }
 
-    public String editar(Entidade entidade) {
-        this.entidade = entidade;
-        this.endereco = entidade.getEndereco();
-        this.regiaoMB.setEstado(entidade.getEndereco().getCidade().getEstado());
-        this.regiaoMB.limparCidades();
-        this.regiaoMB.getCidades();
-        this.regiaoMB.setCidade(entidade.getEndereco().getCidade());
-        return "cadastroentidade.xhtml";
-    }
-
     public void atualizar() {
         try {
+            endereco.setCidade(regiaoMB.getCidade());
+            entidade.setEndereco(endereco);
             entidadedao.iniciarTransacao();
             entidadedao.atualizar(entidade);
             entidadedao.confirmaTransacao();
@@ -127,7 +156,8 @@ public class EntidadeManagedBean implements Serializable {
     }
 
     public List<Entidade> getEntidades() {
-        this.entidades = entidadedao.buscarTodos();
+        this.consultar();
+        
         if (this.entidades == null) {
             this.entidades = new ArrayList<Entidade>();
         }
@@ -137,5 +167,21 @@ public class EntidadeManagedBean implements Serializable {
 
     public void setRegiaoMB(RegiaoManagedBean regiaoMB) {
         this.regiaoMB = regiaoMB;
+    }
+    
+    public List<Entidade> consultar() {
+        if (paramBusca == null) {
+            paramBusca = "";
+        }
+        if (paramBusca.equals("")) {
+            entidades = (List<Entidade>) entidadedao.buscarTodos();
+        } else {
+            entidades = (List<Entidade>) entidadedao.buscarPorNome(paramBusca);
+        }
+
+        if (entidades.isEmpty()) {
+            entidades = entidadedao.buscarPorCaractere(paramBusca);
+        }
+        return entidades;
     }
 }

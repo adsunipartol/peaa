@@ -7,13 +7,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-
 @FacesConverter(forClass = Cidade.class, value = "converterCidade")
 public class CidadeConverter implements Converter {
 
     @Override
-    public Object getAsObject(FacesContext fc, UIComponent uic,
-            String value) {
+    public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null) {
             try {
                 Long cd = Long.parseLong(value);

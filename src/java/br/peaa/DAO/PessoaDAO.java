@@ -1,19 +1,21 @@
 package br.peaa.DAO;
 
+import br.peaa.entidades.Evento;
 import br.peaa.entidades.Pessoa;
+import br.peaa.entidades.Usuario;
 import br.peaa.exceptions.ServicoException;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 
-public class PessoaDAO extends DaoGenerico<Pessoa>{
+public class PessoaDAO extends DaoGenerico<Pessoa> {
 
     private static final Logger logger = Logger.getLogger(PessoaDAO.class);
-    
+
     public PessoaDAO() {
         super(Pessoa.class);
     }
-    
+
     @Override
     public void salvar(Pessoa pessoa) throws ServicoException {
         try {
@@ -24,7 +26,7 @@ public class PessoaDAO extends DaoGenerico<Pessoa>{
             throw new ServicoException(ex);
         }
     }
-    
+
     @Override
     public void atualizar(Pessoa pessoa) throws ServicoException {
         try {
@@ -38,7 +40,7 @@ public class PessoaDAO extends DaoGenerico<Pessoa>{
             throw new ServicoException(ex);
         }
     }
-    
+
     public void remover(Long codigo) throws ServicoException {
         try {
             Pessoa user = super.buscarPeloId(codigo);
@@ -52,24 +54,44 @@ public class PessoaDAO extends DaoGenerico<Pessoa>{
             throw new ServicoException(ex);
         }
     }
-    
-    public Pessoa buscarPeloId(Long codigo){
-        return super.buscarPeloId(codigo);
-    }
 
-    public Pessoa buscarPorRa(String ra) throws ServicoException{
+    public Pessoa buscarPorRa(String ra) throws ServicoException {
         Query qr = HibernateUtil.getInstance().obterSessao().
                 createQuery(" from Pessoa p where p.ra = :ra");
         qr.setParameter("ra", ra);
-        
+
         return (Pessoa) qr.uniqueResult();
     }
 
-    public List<Pessoa> buscarPessoaPorEvento(Long codEvento) throws ServicoException{
+    public List<Pessoa> buscarPessoasPorEvento(Long codEvento) throws ServicoException {
+        EventoDAO eventodao = new EventoDAO();
+        Evento e = eventodao.buscarPeloId(codEvento);
+
+        return e.getPessoas();
+    }
+
+    public List<Pessoa> buscarPorNome(String nome) {
+
         Query qr = HibernateUtil.getInstance().obterSessao().
-                createQuery(" from Pessoa p inner join p.eventos e where e.codigo = :codigo");
-        qr.setParameter("codigo", codEvento);
-        
+                createQuery(" from Pessoa p where p.nome = :nome");
+        qr.setParameter("nome", nome);
+
         return (List<Pessoa>) qr.list();
+    }
+
+    public List<Pessoa> buscarPorCaractere(String nome) {
+        Query qr = HibernateUtil.getInstance().obterSessao().
+                createQuery(" from Pessoa p where upper(p.nome) like upper(:nome)");
+        qr.setParameter("nome", "%" + nome + "%");
+
+        return (List<Pessoa>) qr.list();
+    }
+
+    public Pessoa buscarPorUsuario(Long codigo) {
+        Query qr = HibernateUtil.getInstance().obterSessao().
+                createQuery(" from Pessoa p where p.usuario.codigo = :codigo");
+        qr.setParameter("codigo", codigo);
+        Pessoa p = (Pessoa) qr.uniqueResult();
+        return p;
     }
 }

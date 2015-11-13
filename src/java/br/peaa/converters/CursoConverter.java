@@ -7,13 +7,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-
 @FacesConverter(forClass = Curso.class, value = "converterCurso")
 public class CursoConverter implements Converter {
 
     @Override
-    public Object getAsObject(FacesContext fc, UIComponent uic,
-            String value) {
+    public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null) {
             try {
                 Long cd = Long.parseLong(value);
@@ -21,7 +19,7 @@ public class CursoConverter implements Converter {
                 Curso c = cursodao.buscarPeloId(cd);
                 return c;
             } catch (Throwable t) {
-                t.printStackTrace();
+                
             }
         }
         return null;

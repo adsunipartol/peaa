@@ -2,42 +2,38 @@ package br.peaa.entidades;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table (name="ENDERECO")
+@Table(name = "ENDERECO")
 @SequenceGenerator(name = "SEQ_END", sequenceName = "SEQ_END", allocationSize = 1)
-public class Endereco implements Serializable{
-    
+public class Endereco implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_END")
     private Long codigo;
-    
-    @Column (length=30, nullable=false)
+
+    @Column(length = 30, nullable = false)
     private String rua;
-    
-    @Column (length=30, nullable=false)
+
+    @Column(length = 30, nullable = false)
     private String bairro;
-    
-    @Column (length=10, nullable=false)
+
+    @Column(length = 10, nullable = false)
     private Integer numero;
-    
-    @Column (length=10, nullable=false)
+
+    @Column(length = 10, nullable = false)
     private String cep;
-    
+
     @ManyToOne
     private Cidade cidade;
-    
 
     public Long getCodigo() {
         return codigo;
@@ -70,7 +66,7 @@ public class Endereco implements Serializable{
     public void setCep(String cep) {
         this.cep = cep;
     }
-    
+
     public Integer getNumero() {
         return numero;
     }
@@ -86,8 +82,6 @@ public class Endereco implements Serializable{
     public void setCidade(Cidade cidade) {
         this.cidade = cidade;
     }
-    
-
 
     @Override
     public int hashCode() {
@@ -115,6 +109,5 @@ public class Endereco implements Serializable{
     public String toString() {
         return "Endereco{" + "cidade=" + cidade + '}';
     }
-    
-    
+
 }

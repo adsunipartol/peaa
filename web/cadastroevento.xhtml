@@ -6,14 +6,13 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-    <ui:composition template="layout/layout.xhtml">
+    <ui:composition template="layout/layout.xhtml">        
         <ui:define name="tela">
             <h2>Cadastro de Evento</h2>
         </ui:define>
         <ui:define name="content">
             <script>
                 window.onload = function () {
-                    $('#formEVT\\:custoEVT').mask("0000000000");
                     $('#formEVT\\:dataEVT').mask("00/00/0000");
                     $('#formEVT').validate({
                         rules: {
@@ -67,6 +66,7 @@
                         <h:inputText class="form-control" disabled="true" value="#{eventoMB.evento.codigo}" />
                     </div>
                     <div class="col-sm-3"></div>
+                    <!--ENTRADA PARA DATA-->
                     <div class="col-sm-5">
                         <h:outputText class="col-cad-evento control-label" value="DATA"></h:outputText>
                         <div class="input-group">
@@ -76,42 +76,64 @@
                             </h:inputText>
                         </div>
                     </div>
+                    <!--FIM-->
                 </div>
                 <div class="form-group">
+                    <!--ENTRADA PARA NOME-->
                     <div class="col-sm-5">
                         <h:outputText class="col-cad-evento control-label" value="NOME * "></h:outputText>
                         <h:inputText  id="nomeEVT" class="form-control" value="#{eventoMB.evento.nome}" />
                     </div>
+                    <!--FIM-->
+
+                    <!--ENTRADA PARA DESCRIÇÃO-->
                     <div class="col-sm-5">
                         <h:outputText class="col-cad-evento control-label" value="DESCRICAO"></h:outputText>
                         <h:inputText  class="form-control" id="descricaoEVT" value="#{eventoMB.evento.descricao}" />
                     </div>
+                    <!--FIM-->
                 </div>
                 <div class="form-group">
+                    <!--ENTRADA PARA LOCAL-->
                     <div class="col-sm-5">
                         <h:outputText class="col-cad-evento control-label" value="LOCAL * "></h:outputText>
                         <h:inputText class="form-control" id="localEVT" value="#{eventoMB.evento.localEvento}"/>
                     </div>
+                    <!--FIM-->
+
+                    <!--ENTRADA PARA MINISTRANTE-->
                     <div class="col-sm-5">
                         <h:outputText class="col-cad-evento control-label" value="MINISTRANTE"></h:outputText>
                         <h:inputText  class="form-control" id="ministranteEVT" value="#{eventoMB.evento.ministrante}"/>
                     </div>
+                    <!--FIM-->
                 </div>
                 <div class="form-group">
+                    <!--ENTRADA PARA CURSO-->
                     <div class="col-sm-5">
                         <h:outputText class="col-cad-evento control-label" value="CURSOS * "></h:outputText>
-                        <h:selectManyCheckbox value="#{eventoMB.listCursos}" id="cursoEVT" converter="CursoConverter">
+                        <h:selectManyCheckbox value="#{eventoMB.listCursos}" collectionType="java.util.ArrayList" id="cursoEVT" converter="converterCurso">
                             <f:selectItems value="#{CursoMB.cursos}"
                                            var="curso" itemValue="#{curso}" itemLabel="#{curso.nome}"/>
                         </h:selectManyCheckbox>                                        
                     </div>
+                    <!--FIM-->
+
+                    <!--ENTRADA PARA CUSTO-->
                     <div class="col-sm-2">
                         <h:outputText class="col-cad-evento control-label"  value="CUSTO *"></h:outputText>
                         <div class="input-group">
-                            <span class="input-group-addon">R$</span>
-                            <h:inputText class="form-control" id="custoEVT" value="#{eventoMB.evento.custo}"/>
+                            <h:inputText class="form-control" id="custoEVT" value="#{eventoMB.evento.custo}">
+                                <f:convertNumber maxFractionDigits="2"
+                                                 groupingUsed="true"
+                                                 maxIntegerDigits="4"
+                                                 type="number"/>
+                            </h:inputText>
                         </div>
                     </div>
+                    <!--FIM-->
+
+                    <!--ENTRADA PARA STATUS-->
                     <div class="col-sm-1"></div>
                     <div class="col-sm-2">
                         <h:outputText class="col-cad-evento control-label" value="STATUS * "></h:outputText>
@@ -120,6 +142,7 @@
                             <f:selectItem itemValue="Fechado" itemLabel="Fechado"/>
                         </h:selectOneRadio>
                     </div>
+                    <!--FIM-->
                 </div>
 
                 <c:if test="#{eventoMB.editando == true}"><div id="subevento" style="background-color: #e5e5e5; margin: 10px; 

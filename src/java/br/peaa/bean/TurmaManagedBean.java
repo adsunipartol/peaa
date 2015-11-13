@@ -48,6 +48,7 @@ public class TurmaManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
         } catch (Exception ex) {
             turmadao.desfazTransacao();
+            turma.setCodigo(null);
             logger.error(ex.getMessage(), ex);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }

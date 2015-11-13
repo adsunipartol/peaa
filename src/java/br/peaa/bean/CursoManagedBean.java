@@ -25,13 +25,12 @@ public class CursoManagedBean implements Serializable {
     private static final Logger logger = Logger.getLogger(CursoManagedBean.class);
 
     private Calendar ano;
-    private List<Curso> cursoList;
-    private List<SelectItem> turmas;
-    private Curso curso = new Curso();
+    private List<Turma> turmas;
+    private Curso curso;
     private List<Curso> cursos;
-    private List<SelectItem> cursosSelecao;
-    private List<SelectItem> turnoSelecao;
-    private List<SelectItem> entidadesSelecao;
+    private List<Curso> cursosSelecao;
+    private List<SelectItem> turno;
+    private List<Entidade> entidades;
     private String paramBusca;
     private Integer AnoTurma;
     private boolean editando;
@@ -39,51 +38,23 @@ public class CursoManagedBean implements Serializable {
 
     public CursoManagedBean() {
         editando = false;
+        curso = new Curso();
         cursodao = new CursoDAO();
-        cursoList = new ArrayList();
-        turmas = new ArrayList<SelectItem>();
+        turmas = new ArrayList<Turma>();
         paramBusca = "";
     }
 
-    public void limparTurmas() {
-        turmas = null;
-    }
-
-    public List<SelectItem> getCursosSelecao() {
-        return cursosSelecao;
-    }
-
-    public void setCursosSelecao(List<SelectItem> cursosSelecao) {
-        this.cursosSelecao = cursosSelecao;
-    }
-
-    public List<SelectItem> buscarCursos() {
-        if (cursosSelecao == null) {
-            cursosSelecao = new ArrayList<SelectItem>();
-            for (Curso c : cursodao.buscarTodos()) {
-                cursosSelecao.add(new SelectItem(c.getCodigo(), c.getNome()));
-            }
-        }
-        return cursosSelecao;
-    }
-
-    public List<SelectItem> getTurmas() {
-        if (turmas == null && this.curso.getCodigo() != null) {
-            turmas = new ArrayList<SelectItem>();
+    public List<Turma> getTurmas() {
+        if ((turmas == null || turmas.isEmpty()) && (this.curso != null && this.curso.getCodigo() != null)) {
+            turmas = new ArrayList<Turma>();
             TurmaDAO turmadao = new TurmaDAO();
-            for (Turma tur : turmadao.buscarTurmaPorCurso(this.curso.getCodigo())) {
-                turmas.add(new SelectItem(tur, tur.getSerie().toString() + "º - Ano " + tur.getAno()));
-            }
+            turmas = turmadao.buscarTurmaPorCurso(this.curso.getCodigo());
         }
         return turmas;
     }
 
-    public List<Curso> getCursoList() {
-        return cursoList;
-    }
-
-    public void setCursoList(List<Curso> cursoList) {
-        this.cursoList = cursoList;
+    public void setTurmas(List<Turma> turmas) {
+        this.turmas = turmas;
     }
 
     public String getParamBusca() {
@@ -113,10 +84,14 @@ public class CursoManagedBean implements Serializable {
     public void criar() {
         if (curso.getCodigo() == null) {
             try {
-                cursodao.iniciarTransacao();
-                cursodao.salvar(curso);
-                cursodao.confirmaTransacao();
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
+                if (curso.getEntidade() == null || curso.getEntidade().getCodigo() == null) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "É necessário informar a Entidade.", null));
+                } else {
+                    cursodao.iniciarTransacao();
+                    cursodao.salvar(curso);
+                    cursodao.confirmaTransacao();
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
+                }
             } catch (Exception ex) {
                 //faz o rollback e fecha a sessão para que seja aberta uma tentativa posterior
                 cursodao.desfazTransacao();
@@ -160,7 +135,7 @@ public class CursoManagedBean implements Serializable {
 
     public List<Curso> getCursos() {
         this.consultar();
-        
+
         if (this.cursos == null) {
             this.cursos = new ArrayList<Curso>();
         }
@@ -172,14 +147,27 @@ public class CursoManagedBean implements Serializable {
         this.cursos = cursos;
     }
 
+    public List<Curso> getCursosSelecao() {
+        return cursosSelecao = (List<Curso>) cursodao.buscarTodos();
+    }
+
+    public void setCursosSelecao(List<Curso> cursosSelecao) {
+        this.cursosSelecao = cursosSelecao;
+    }
+    
     public String editar(Curso c) {
+        paramBusca = "";
         editando = true;
         this.curso = c;
+        AnoTurma = null;
         return "cadastrocurso.xhtml";
     }
 
     public String novo() {
+        paramBusca = "";
         curso = new Curso();
+        editando = false;
+        AnoTurma = null;
         return "cadastrocurso.xhtml";
     }
 
@@ -191,53 +179,61 @@ public class CursoManagedBean implements Serializable {
         this.AnoTurma = AnoTurma;
     }
 
-    public List<SelectItem> getTurnoSelecao() {
-        if (turnoSelecao == null) {
-            turnoSelecao = new LinkedList<SelectItem>();
-            turnoSelecao.add(new SelectItem("Noturno", "Noturno"));
-            turnoSelecao.add(new SelectItem("Matutino", "Matutino"));
-            turnoSelecao.add(new SelectItem("Vespertino", "Vespertino"));
+    public List<SelectItem> getTurno() {
+        if (turno == null) {
+            turno = new LinkedList<SelectItem>();
+            turno.add(new SelectItem("Noturno", "Noturno"));
+            turno.add(new SelectItem("Matutino", "Matutino"));
+            turno.add(new SelectItem("Vespertino", "Vespertino"));
         }
-        return turnoSelecao;
+        return turno;
     }
 
     public void gerarTurmas() {
         int y = Calendar.getInstance().get(Calendar.YEAR);
-        if (AnoTurma != null && AnoTurma >= y) {
-            for (int i = 1; i <= curso.getNumSeries(); i++) {
-                Turma t = new Turma();
-                t.setAno(AnoTurma);
-                t.setCurso(curso);
-                t.setSerie(i);
-                t.setStatus(Boolean.TRUE);
-                TurmaDAO turmadao = new TurmaDAO();
-                try {
-                    turmadao.salvar(t);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        TurmaDAO turmadao = new TurmaDAO();
+        //Verificar se já existem turmas geradas para o curso naquele ano
+        List<Turma> listaTurma = turmadao.buscarTurmaPorCurso(curso.getCodigo());
+        boolean achouTurmaCursoAno = false;
+        for (Turma tmp : listaTurma) {
+            if (tmp.getAno().equals(AnoTurma)) {
+                achouTurmaCursoAno = true;
+                break;
+            }
+        }
+        if (!achouTurmaCursoAno) {
+            if (AnoTurma != null && AnoTurma >= y) {
+                for (int i = 1; i <= curso.getNumSeries(); i++) {
+                    Turma t = new Turma();
+                    t.setAno(AnoTurma);
+                    t.setCurso(curso);
+                    t.setSerie(i);
+                    t.setStatus(Boolean.TRUE);
+                    turmadao = new TurmaDAO();
+                    try {
+                        turmadao.salvar(t);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Turmas geradas com sucesso", null));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Ano invalido", null));
             }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Turmas geradas com sucesso", null));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Ano invalido", null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Já existem turmas do ano de " + AnoTurma + " no curso " + curso.getNome() + " cadastradas.", null));
         }
     }
 
-    public List<SelectItem> getEntidadesSelecao() {
+    public List<Entidade> getEntidades() {
         EntidadeDAO entidadedao = new EntidadeDAO();
-        if (entidadesSelecao == null) {
-            entidadesSelecao = new ArrayList<SelectItem>();
-            for (Entidade c : entidadedao.buscarTodos()) {
-                entidadesSelecao.add(new SelectItem(c, c.getNome()));
-            }
-        } else {
-            entidadedao.buscarTodos();
-        }
-        return entidadesSelecao;
+        entidades = entidadedao.buscarTodos();
+
+        return entidades;
     }
 
-    public void setEntidadesSelecao(List<SelectItem> entidadesSelecao) {
-        this.entidadesSelecao = entidadesSelecao;
+    public void setEntidades(List<Entidade> entidades) {
+        this.entidades = entidades;
     }
 
     public List<Curso> consultar() {
@@ -249,7 +245,7 @@ public class CursoManagedBean implements Serializable {
         } else {
             cursos = (List<Curso>) cursodao.buscarPorNome(paramBusca);
         }
-        
+
         if (cursos.isEmpty()) {
             cursos = cursodao.buscarPorCaractere(paramBusca);
         }

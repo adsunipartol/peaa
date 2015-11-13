@@ -22,13 +22,13 @@ public class HibernateUtil {
     }
     
     public Session obterSessao(){
-        if(session == null){
+        if(session == null || !session.isOpen()){
             session = factory.openSession();
         }
         return session;
     }
     
     public void finalizarSessao(){
-        session = null;
+        session.close();
     }
 }

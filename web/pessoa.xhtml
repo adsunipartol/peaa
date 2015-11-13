@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Pessoa</h2>
         </ui:define>
@@ -15,39 +20,14 @@
                     <div class="form-group">
                         <h:outputText class="col-sm-2 control-label" style="float: left" value="Pessoa"></h:outputText>
                         <div class="col-sm-5">
-                            <h:inputText id="parametro"  class="form-control" />
+                            <h:inputText id="parametro" value="#{pessoaMB.paramBusca}" class="form-control" />
                         </div>
                         <h:commandButton  value="Consultar" class="btn btn-primary"></h:commandButton>
-                        <button type="button" class="btn btn-info btn-flat md-trigger" data-modal="colored-info">Alterar Serie</button>
-
-                        <div class="md-modal colored-header info md-effect-10" id="colored-info" style="perspective: 1300px; height: 354px;">
-                            <div class="md-content">
-                                <div class="modal-header">
-                                    <h3>Alterar Serie</h3>
-                                    <button type="button" class="close md-close" data-dismiss="modal" aria-hidden="true">×</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="text-center">
-                                        <h4>Alterar Para</h4>
-                                        <h:selectOneMenu>
-                                            <f:selectItem itemLabel="2º Serie"/>
-                                        </h:selectOneMenu>
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <h:commandButton class="btn btn-primary" value="Alterar" />
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <!-- Chama tela de Novo cadastro-->
                     <h:dataTable value="#{pessoaMB.pessoas}"
                                  var="p" 
                                  class="table table-bordered" id="datatable">
-                        <h:column> 
-                            <f:facet name="header">CODIGO</f:facet>
-                                #{p.codigo}
-                        </h:column>
                         <h:column>
                             <f:facet name="header">TIPO</f:facet>
                                 #{p.tipo}
@@ -62,20 +42,9 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header">TURMA</f:facet>
+                                #{p.turma} - #{p.turma.curso}
                         </h:column>
-<!--
-                        <h:column>
-                            <f:facet name="header">
-                                <h:selectManyCheckbox border="0" 
-                                                      style="margin: 0 auto; padding: 0 auto;
-                                                      text-align: center; border-spacing: 0px">
-                                    <f:selectItem/>
-                                </h:selectManyCheckbox>
-                            </f:facet>
-                            <h:selectManyCheckbox>
-                                <f:selectItem/>
-                            </h:selectManyCheckbox>
-                        </h:column> -->
+
                         <h:column>
                             <f:facet name="header">EDITAR PESSOA</f:facet>
                             <h:commandButton value="Editar Pessoa" class="btn btn-info btn-flat" 
@@ -85,7 +54,7 @@
                         <h:column>
                             <f:facet name="header">EDITAR USUARIO</f:facet>
                             <h:commandButton value="Editar Usuario" class="btn btn-info btn-flat" 
-                                             action="#{pessoaMB.editarUsuario(p.usuario)}"/>
+                                             action="#{pessoaMB.editarUsuario(p)}"/>
                         </h:column>
 
                         <h:column>

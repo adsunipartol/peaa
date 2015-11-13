@@ -6,6 +6,11 @@
       xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:composition template="layout/template.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Cadastro de SubEvento</h2>
         </ui:define>
@@ -47,7 +52,8 @@
                 </div>
                 <div class="form-group">    
                     <h:outputText styleClass="col-cad-evento control-label" style="float: left; width: 15%" value="EVENTO"></h:outputText>
-                    <h:selectOneMenu value="#{subeventoMB.eventoCurso.codigo}" >
+                    <h:selectOneMenu value="#{subeventoMB.eventoCurso}" converter="converterEvento">
+                        <f:selectItem itemValue="" itemLabel="Selecione..." />
                         <f:selectItems value="#{eventoMB.eventosSelecao}"/>
                     </h:selectOneMenu>
                 </div>

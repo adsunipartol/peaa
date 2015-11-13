@@ -22,32 +22,30 @@
         <div id="msgAlerta" style="display: none;">
             <h:messages id="msgAlerta" errorClass="danger" infoClass="success" warnClass="warning"/>
         </div>
-        <!-- TABELA DOS EVENTOS -->
-        <h:dataTable value="#{eventoMB.eventos}"
-                     var="e"
-                     class="table table-bordered" id="datatable">
-            <h:column> 
-                <f:facet name="header">CODIGO</f:facet>
-                    #{e.codigo}
-            </h:column>
-            <h:column>    				
-                <f:facet name="header">NOME</f:facet>    				
-                    #{e.nome}
-            </h:column>
-            <h:column>
-                <f:facet name="header">LOCAL</f:facet>
-                    #{e.localEvento}
-            </h:column>
-            <h:column>
-                <f:facet name="header">DATA</f:facet>
-                    #{e.dataEvento}
-            </h:column>
-            <h:column>
-                <f:facet name="header">STATUS</f:facet>
-                    #{e.status}
-            </h:column>
-        </h:dataTable>
-        <!--TABELA DOS EVENTOS-->   
+        <ui:define name="content">
+            <!-- TABELA DOS EVENTOS -->
+            <h:dataTable value="#{eventoMB.eventos}"
+                         var="e"
+                         class="table table-bordered" id="datatable">
+                <h:column>    				
+                    <f:facet name="header">NOME</f:facet>    				
+                        #{e.nome}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">LOCAL</f:facet>
+                        #{e.localEvento}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">DATA</f:facet>
+                        #{e.dataEvento}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">STATUS</f:facet>
+                        #{e.status}
+                </h:column>
+            </h:dataTable>
+            <!--TABELA DOS EVENTOS-->   
+        </ui:define>
     </ui:composition>
 </html>
 

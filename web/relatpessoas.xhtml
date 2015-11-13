@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Relatorio de Pessoas<span></span></h2>
         </ui:define>
@@ -34,18 +39,19 @@
                 <div class="form-group">
                     <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="CURSO"></h:outputText>
                     <div class="col-sm-5">
-                        <h:selectOneMenu>
+                        <h:selectOneMenu converter="converterCurso">
                             <f:selectItem itemLabel="--Todos--"/>
-                            <f:selectItems value="#{cursoMB.cursosSelecao}"/>
+                            <f:selectItems value="#{CursoMB.cursosSelecao}"/>
+                            <f:ajax event="change" render="turmaCadastroPessoa"  listener="#{CursoMB.setTurmas(null)}"/>
                         </h:selectOneMenu>
                     </div>
                 </div>
                 <div class="form-group">
                     <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="TURMA"></h:outputText>
                     <div class="col-sm-5">
-                        <h:selectOneMenu>
+                        <h:selectOneMenu id="turmaCadastroPessoa" converter="converterTurma">
                             <f:selectItem itemLabel="--Todas--"/>
-                            <f:selectItems />
+                            <f:selectItems value="#{CursoMB.turmas}"/>
                         </h:selectOneMenu>
                     </div>
                 </div>

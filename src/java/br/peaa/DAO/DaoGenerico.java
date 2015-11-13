@@ -15,11 +15,15 @@ public abstract class DaoGenerico<T> {
 
     public void salvar(T registro) throws ServicoException {
         Session sessao = HibernateUtil.getInstance().obterSessao();
+        sessao.flush();
+        sessao.clear();
         sessao.save(registro);
     }
 
     public void atualizar(T registro) throws ServicoException {
         Session sessao = HibernateUtil.getInstance().obterSessao();
+        sessao.flush();
+        sessao.clear();
         sessao.update(registro);
     }
 

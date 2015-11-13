@@ -1,13 +1,12 @@
 package br.peaa.entidades;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,9 +16,6 @@ public class Perfil implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigo;
-
-    @ManyToMany (mappedBy = "perfis")
-    private List<Usuario> usuarios;
 
     @Column(length = 30, nullable = false)
     private String nome;
@@ -39,7 +35,6 @@ public class Perfil implements Serializable {
         return nome;
     }
 
-    
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -51,16 +46,31 @@ public class Perfil implements Serializable {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
-    public List<Usuario> getUsuarios() {
-        return usuarios;
+    
+    @Override
+    public int hashCode() {
+        int hash = 4;
+        hash = 39 * hash + Objects.hashCode(this.codigo);
+        return hash;
     }
 
-    public void setUsuarios(List<Usuario> usuarios) {
-        this.usuarios = usuarios;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Perfil other = (Perfil) obj;
+        if (!Objects.equals(this.codigo, other.codigo)) {
+            return false;
+        }
+        return true;
     }
     
-    
-
-
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

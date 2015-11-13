@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="/layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Curso</h2>
         </ui:define>
@@ -17,7 +22,7 @@
                         <div class="col-sm-5">
                             <h:inputText id="parametro" value="#{CursoMB.paramBusca}" class="form-control" />
                         </div>
-                        <h:commandButton value="Consultar" action="#{CursoMB.buscarCursos}" class="btn btn-primary"></h:commandButton>
+                        <h:commandButton value="Consultar" action="#{CursoMB.consultar()}" class="btn btn-primary"></h:commandButton>
                     </div>
                     <!-- Chama tela de Novo cadastro-->
                     <h:commandButton class="btn btn-success" action="#{CursoMB.novo()}" value="Novo"></h:commandButton>
@@ -25,10 +30,6 @@
                 <h:dataTable value="#{CursoMB.cursos}"
                              var="c"
                              class="table table-bordered" id="datatable">
-                    <h:column> 
-                        <f:facet name="header">CODIGO</f:facet>
-                            #{c.codigo}
-                    </h:column>
                     <h:column>    				
                         <f:facet name="header">NOME DO CURSO </f:facet>    				
                             #{c.nome}

@@ -53,9 +53,4 @@ public class PerfilDAO extends DaoGenerico<Perfil>{
     public Perfil buscar(Long codigo) {
         return super.buscarPeloId(codigo);
     }
-
-    @Override
-    public List<Perfil> buscarTodos() {
-        return super.buscarTodos();
-    }
 }

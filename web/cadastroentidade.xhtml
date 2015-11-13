@@ -5,6 +5,11 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Cadastro de Entidade de Ensino</h2>
         </ui:define>
@@ -72,62 +77,78 @@
                             <h:outputText class="col-cad-evento control-label" value="CODIGO"></h:outputText>
                             <h:inputText class="form-control" disabled="true"  value="#{entidadeMB.entidade.codigo}"/>
                         </div>
+                        <!--ENTRADA PARA O NOME-->
                         <div class="col-sm-5">
                             <h:outputText class="col-cad-evento control-label" value="NOME *"></h:outputText>
                             <h:inputText  class="form-control" required="true" value="#{entidadeMB.entidade.nome}" id="nomeEntidade"/>
                         </div>
+                        <!--FIM-->
+                        
+                        <!--ENTRADA PARA A UNIDADE-->
                         <div class="col-sm-5">
                             <h:outputText class="col-cad-evento control-label" value="UNIDADE *" ></h:outputText>
                             <h:inputText  class="form-control" required="true" value="#{entidadeMB.entidade.unidade}" id="unidadeEntidade"/>
                         </div>
+                        <!--FIM-->
                     </div>
                     <div class="form-group">
+                        <!--ENTRADA PARA DESCRIÇÃO-->
                         <div class="col-sm-5" >
                             <h:outputText class="col-cad-evento control-label" value="DESCRIÇÃO" ></h:outputText>
                             <h:inputTextarea  class="form-control" value="#{entidadeMB.entidade.descricao}" id="descricaoEntidade" />
                         </div>
+                        <!--FIM-->
+                        
                         <!--ENTRADA PARA UF-->  
                         <div class="col-sm-3">
                             <h:outputText styleClass="col-cad-evento control-label" value="ESTADO"></h:outputText>
-                            <h:selectOneMenu id="estadoEntidade" styleClass="form-control" value="#{RegiaoMB.estado.codigo}">
+                            <h:selectOneMenu id="estadoEntidade" styleClass="form-control" value="#{RegiaoMB.estado}" converter="converterEstado">
                                 <f:selectItem itemValue="" itemLabel="Selecione..." />
-                                <f:selectItems value="#{RegiaoMB.buscarEstados()}"/>
-                                <f:ajax event="change" render="cidadeEntidade"  listener="#{RegiaoMB.limparCidades()}"/>
+                                <f:selectItems value="#{RegiaoMB.estados}"/>
+                                <f:ajax event="change" render="cidadeEntidade"  listener="#{RegiaoMB.setCidades(null)}"/>
                             </h:selectOneMenu>
                         </div>
+                        <!--FIM-->
+                        
                         <!--ENTRADA PARA CIDADE-->
                         <div class="col-sm-3">
                             <h:outputText styleClass="col-cad-evento control-label" value="CIDADE"></h:outputText>
-                            <h:selectOneMenu id="cidadeEntidade" styleClass="form-control" value="#{RegiaoMB.cidade.codigo}">
+                            <h:selectOneMenu id="cidadeEntidade" styleClass="form-control" value="#{RegiaoMB.cidade}" converter="converterCidade">
                                 <f:selectItem itemValue="" itemLabel="Selecione..." />
-                                <f:selectItems value="#{RegiaoMB.cidades}" var="cidade" itemValue="#{cidade.codigo}" itemLabel="#{cidade.descricao}"/>
+                                <f:selectItems value="#{RegiaoMB.cidades}"/>
                             </h:selectOneMenu>
                         </div>
+                        <!--FIM-->
                     </div>                
-                    <!--ENTRADA PARA CEP-->
                     <div class="form-group">
+                        <!--ENTRADA PARA CEP-->
                         <div class="col-sm-3">
                             <h:outputText styleClass="col-cad-evento control-label" value="CEP"></h:outputText>
                             <h:inputText styleClass="form-control" id="cepEntidade" value="#{entidadeMB.endereco.cep}"/>
                         </div>
+                        <!--FIM-->
+                        
                         <!--ENTRADA PARA BAIRRO-->
                         <div class="col-sm-3">
                             <h:outputText styleClass="col-cad-evento control-label" value="BAIRRO"></h:outputText>
                             <h:inputText styleClass="form-control"  value="#{entidadeMB.endereco.bairro}" id="bairroEntidade"/>
                         </div>
+                        <!--FIM-->
+                        
                         <!--ENTRADA PARA RUA-->
                         <div class="col-sm-3">
                             <h:outputText styleClass="col-cad-evento control-label" value="RUA"></h:outputText>
                             <h:inputText styleClass="form-control" id="ruaEntidade" value="#{entidadeMB.endereco.rua}"/>
                         </div>
                         <!--FIM-->
+                        
                         <!--ENTRADA PARA NUMERO-->
                         <div class="col-sm-3">
                             <h:outputText styleClass="col-cad-evento control-label" value="NUMERO"></h:outputText>
                             <h:inputText styleClass="form-control" id="numeroEntidade" value="#{entidadeMB.endereco.numero}"/>
                         </div>
+                        <!--FIM-->
                     </div>
-                    <!--FIM-->
                     <div class="spacer spacer-bottom" align="center" style="padding-top: 20px">
                         <h:commandButton type="submit" class="btn btn-success btn-rad" action="#{entidadeMB.criar()}" value="Salvar"/>
                         &nbsp;&nbsp;&nbsp;

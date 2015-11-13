@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Relatorio de Presencas<span></span></h2>
         </ui:define>
@@ -25,7 +30,7 @@
                     <div class="col-sm-5">
                         <h:selectOneMenu>
                             <f:selectItem itemLabel="--Todos--"/>
-                            <f:selectItems value="#{cursoMB.cursosSelecao}"/>
+                            <f:selectItems value="#{eventoMB.eventosSelecao}"/>
                         </h:selectOneMenu>
                     </div>
                 </div>
@@ -34,7 +39,7 @@
                     <div class="col-sm-5">
                         <h:selectOneMenu>
                             <f:selectItem itemLabel="--Todos--"/>
-                            <f:selectItems value="#{cursoMB.cursosSelecao}"/>
+                            <f:selectItems value="#{CursoMB.cursosSelecao}"/>
                         </h:selectOneMenu>
                     </div>
                 </div>

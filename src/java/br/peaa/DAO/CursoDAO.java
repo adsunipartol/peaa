@@ -64,10 +64,10 @@ public class CursoDAO extends DaoGenerico<Curso> {
         return (List<Curso>) qr.list();
     }
 
-    public List<Curso> buscarPorCaractere(String parametro) {
+    public List<Curso> buscarPorCaractere(String nome) {
         Query qr = HibernateUtil.getInstance().obterSessao().
-                createQuery(" from Curso c where c.nome like :nome");
-        qr.setParameter("nome", "%" + parametro + "%");
+                createQuery(" from Curso c where upper(c.nome) like upper(:nome)");
+        qr.setParameter("nome", "%" + nome + "%");
 
         return (List<Curso>) qr.list();
     }
