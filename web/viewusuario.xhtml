@@ -6,6 +6,11 @@
       xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Editar Usuario <span> - #{usuarioMB.usuario.login}</span></h2>
         </ui:define>
