@@ -33,7 +33,7 @@ public class Entidade implements Serializable {
     @Column(length = 500, nullable = false)
     private String descricao;
 
-    @OneToOne (cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Endereco endereco;
 
     public Long getCodigo() {
@@ -63,9 +63,7 @@ public class Entidade implements Serializable {
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
-    
-    
-    
+
     public void setUnidade(String unidade) {
         this.unidade = unidade;
     }
@@ -107,5 +105,9 @@ public class Entidade implements Serializable {
         }
         return true;
     }
-
+    
+    @Override
+    public String toString(){
+        return nome;
+    }
 }

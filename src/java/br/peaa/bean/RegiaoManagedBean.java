@@ -8,66 +8,48 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-
-import javax.faces.model.SelectItem;
 
 @ManagedBean(name = "RegiaoMB")
 @SessionScoped
 public class RegiaoManagedBean implements Serializable {
 
-    private List<SelectItem> cidades = new ArrayList<SelectItem>();
-    private Estado estado = new Estado();
-    private Cidade cidade = new Cidade();
-    private List<SelectItem> estadosSelecao;
-    private List<SelectItem> cidadesSelecao;
+    private List<Cidade> cidades;
+    private List<Estado> estados;
+    private Estado estado;
+    private Cidade cidade;
+
+    public RegiaoManagedBean() {
+        cidades = new ArrayList<Cidade>();
+        estados = new ArrayList<Estado>();
+        estado = new Estado();
+        cidade = new Cidade();
+    }
 
     //Busca todos os estados
-    public List<SelectItem> buscarEstados() {
-        if (estadosSelecao == null) {
-            estadosSelecao = new ArrayList<SelectItem>();
+    public List<Estado> getEstados() {
+        if (estados == null || estados.isEmpty()) {
+            estados = new ArrayList<Estado>();
             EstadoDAO estadodao = new EstadoDAO();
-            for (Estado est : estadodao.buscarTodos()) {
-                estadosSelecao.add(new SelectItem(est.getCodigo(), est.getDescricao()));
-            }
+            estados = estadodao.buscarTodos();
         }
-        return estadosSelecao;
+        return estados;
     }
 
-    //Busca todas as cidades conforme o estado
-    public void limparCidades() {
-        cidades = null;
+    public void setEstados(List<Estado> estados) {
+        this.estados = estados;
     }
 
-    public List<SelectItem> getCidades() {
-        if (cidades == null) {
-            cidades = new ArrayList<SelectItem>();
+    public List<Cidade> getCidades() {
+        if (cidades == null && this.estado != null && this.estado.getCodigo() != null) {
+            cidades = new ArrayList<Cidade>();
             CidadeDAO cidadedao = new CidadeDAO();
-            for (Cidade cid : cidadedao.buscarCidadePorEstado(this.estado.getCodigo())) {
-                cidades.add(new SelectItem(cid.getCodigo(), cid.getDescricao()));
-            }
+            cidades = cidadedao.buscarCidadePorEstado(this.estado.getCodigo());
         }
         return cidades;
     }
 
-    public List<SelectItem> getEstadosSelecao() {
-        return estadosSelecao;
-    }
-
-    public void setEstadosSelecao(List<SelectItem> estadosSelecao) {
-        this.estadosSelecao = estadosSelecao;
-    }
-
-    public List<SelectItem> getCidadesSelecao() {
-        return cidadesSelecao;
-    }
-
-    public void setCidadesSelecao(List<SelectItem> cidadesSelecao) {
-        this.cidadesSelecao = cidadesSelecao;
-    }
-
-    public void setCidades(List<SelectItem> cidades) {
+    public void setCidades(List<Cidade> cidades) {
         this.cidades = cidades;
     }
 

@@ -6,17 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "TURMA", uniqueConstraints = @UniqueConstraint (columnNames = {"serie", "curso_codigo", "ano"}))
+@Table(name = "TURMA", uniqueConstraints = @UniqueConstraint(columnNames = {"serie", "curso_codigo", "ano"}))
 public class Turma implements Serializable {
+
     @Id
     @SequenceGenerator(name = "SEQ_TURMA", sequenceName = "SEQ_TURMA")
     @GeneratedValue(generator = "SEQ_TURMA")
@@ -34,16 +33,7 @@ public class Turma implements Serializable {
     @Column(length = 4, nullable = false)
     private Integer ano;
 
-    @ManyToMany
-    @JoinTable(name = "matricula",
-            joinColumns
-            = @JoinColumn(name = "cod_turma",
-                    referencedColumnName = "codigo",
-                    unique = true),
-            inverseJoinColumns
-            = @JoinColumn(name = "cod_pessoa",
-                    referencedColumnName = "codigo",
-                    unique = true))
+    @OneToMany(mappedBy = "turma")
     private List<Pessoa> pessoas;
 
     public Turma() {
@@ -57,8 +47,7 @@ public class Turma implements Serializable {
         this.curso = curso;
         this.ano = ano;
     }
-    
-    
+
     public Long getCodigo() {
         return codigo;
     }
@@ -70,8 +59,6 @@ public class Turma implements Serializable {
     public void setPessoas(List<Pessoa> pessoas) {
         this.pessoas = pessoas;
     }
-    
-    
 
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
@@ -130,13 +117,9 @@ public class Turma implements Serializable {
     public void setStatus(Boolean status) {
         this.status = status;
     }
-    
+
     @Override
     public String toString() {
-        return "Turma{" + "Serie " + serie + ", Ano " + ano + '}';
+        return serie + "º Ano " + ano;
     }
-    
-    
-    
-
 }

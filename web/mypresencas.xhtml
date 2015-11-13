@@ -5,15 +5,21 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+            <f:viewAction action="#{pessoaMB.onLoad()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
-            <h2>Minhas Prensenças <span> #{pessoaMB.pessoa.nome} </span></h2>
+            <h2>Minhas Prensenças: <span> #{pessoaMB.pessoa.nome} </span></h2>
         </ui:define>
         <ui:define name="content">
             <h:form style="margin-bottom: 0px !important;" class="form-horizontal">
                 <div class="panel-body">
                     <!-- TABELA DOS EVENTOS -->
                     <h5>Eventos no qual você participou </h5>
-                    <h:dataTable value="#{eventoMB.participantesEVT}"
+                    <h:dataTable value="#{pessoaMB.pessoa.eventos}"
                                  var="e" 
                                  class="table table-bordered" id="datatable">
                         <h:column> 

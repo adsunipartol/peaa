@@ -29,6 +29,10 @@ public class EnderecoManagedBean implements Serializable {
 
     public EnderecoManagedBean() {
         this.novo = true;
+        endereco = new Endereco();
+        enderecos = new ArrayList<Endereco>();
+        turnoSelecao = new ArrayList<SelectItem>();
+        enderecosSelecao = new ArrayList<SelectItem>();
         enderecodao = new EnderecoDAO();
     }
 

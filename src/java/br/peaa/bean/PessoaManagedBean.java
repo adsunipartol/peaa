@@ -40,16 +40,28 @@ public class PessoaManagedBean implements Serializable {
     private String telTMP;
     private String senhaTmp;
     private PessoaDAO pessoadao;
+    private String paramBusca;
+
+    @ManagedProperty(value = "#{RegiaoMB}")
+    private RegiaoManagedBean regiaoMB;
+
+    @ManagedProperty(value = "#{CursoMB}")
+    private CursoManagedBean cursoMB;
 
     public PessoaManagedBean() {
-        this.novo = true;
         pessoa = new Pessoa();
+        pessoas = new ArrayList<Pessoa>();
+        curso = new Curso();
+        this.novo = true;
         endereco = new Endereco();
         user = new Usuario();
-        curso = new Curso();
+        turma = new Turma();
+        estado = new Estado();
         perfil = new Perfil();
-        //Fredman:30/08/2015
         pessoadao = new PessoaDAO();
+        regiaoMB = new RegiaoManagedBean();
+        cursoMB = new CursoManagedBean();
+        paramBusca = "";
     }
 
     public String getCpfTMP() {
@@ -152,72 +164,148 @@ public class PessoaManagedBean implements Serializable {
         this.curso = curso;
     }
 
-    public void criar() {
-        try {
-            if (pessoa.getCodigo() == null) {
-                user.setStatus("Inativo");
-                user.setLogin(pessoa.getRa());
-
-                pessoa.setCpf(cpfTMP.replaceAll("[.-]", ""));
-                pessoa.setTelefone(telTMP.replaceAll("[()]", ""));
-                endereco.setCep(cepTMP.replaceAll("[-]", ""));
-
-                pessoa.setTurma(new ArrayList<Turma>());
-                pessoa.getTurma().add(turma);
-                pessoa.setEndereco(endereco);
-                pessoa.setUsuario(user);
-
-                pessoadao.iniciarTransacao();
-                pessoadao.salvar(pessoa);
-                pessoadao.confirmaTransacao();
-                ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-                context.redirect("sucesso.xhtml");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
-            } else {
-                if (pessoa.getUsuario().getPerfis() == null) {
-                    pessoa.getUsuario().setPerfis(new ArrayList<Perfil>());
-                }
-                pessoa.getUsuario().getPerfis().clear();
-                pessoa.getUsuario().getPerfis().add(this.perfil);
-                atualizar();
-            }
-//            if (confSenha != null && senhaTmp != null && senhaTmp.equals(confSenha)) {
-//                pessoa.getUsuario().setSenha(senhaTmp);
-//                atualizar();
-//            } else {
-//                atualizar();
-//            }
-        } catch (Exception ex) {
-            pessoadao.desfazTransacao();
-            pessoa.setCodigo(null);
-            turma.setCodigo(null);
-            user.setCodigo(null);
-            endereco.setCodigo(null);
-            logger.error(ex.getMessage(), ex);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
-        }
+    public RegiaoManagedBean getRegiaoMB() {
+        return regiaoMB;
     }
-    
-    public String novo(){
-        this.novo = true;
+
+    public void setRegiaoMB(RegiaoManagedBean regiaoMB) {
+        this.regiaoMB = regiaoMB;
+    }
+
+    public CursoManagedBean getCursoMB() {
+        return cursoMB;
+    }
+
+    public void setCursoMB(CursoManagedBean cursoMB) {
+        this.cursoMB = cursoMB;
+    }
+
+    public String getParamBusca() {
+        return paramBusca;
+    }
+
+    public void setParamBusca(String paramBusca) {
+        this.paramBusca = paramBusca;
+    }
+
+    public String novo() {
+        paramBusca = "";
+        novo = true;
+        pessoa = new Pessoa();
+        curso = new Curso();
+        endereco = new Endereco();
+        user = new Usuario();
+        turma = new Turma();
+        estado = new Estado();
+        perfil = new Perfil();
+        cpfTMP = "";
+        cepTMP = "";
+        telTMP = "";
+        senhaTmp = "";
+        regiaoMB.setEstado(null);
+        regiaoMB.setCidade(null);
+        regiaoMB.setCidades(null);
+        regiaoMB.setEstados(null);
+        cursoMB.setCurso(curso);
+        cursoMB.setTurmas(null);
+        cursoMB.setParamBusca("");
         return "cadastropessoa.xhtml";
     }
 
     public String editar(Pessoa pessoa) {
+        paramBusca = "";
         novo = false;
-        this.endereco = pessoa.getEndereco();
         this.pessoa = pessoa;
+        user = pessoa.getUsuario();
+        perfil = user.getPerfil();
+        confSenha = user.getSenha();
+        endereco = pessoa.getEndereco();
+        turma = pessoa.getTurma();
+        if (turma != null) {
+            curso = pessoa.getTurma().getCurso();
+        } else {
+            curso = new Curso();
+        }
+        regiaoMB.setEstado(pessoa.getEndereco().getCidade().getEstado());
+        regiaoMB.setCidades(null);
+        regiaoMB.getCidades();
+        regiaoMB.setCidade(pessoa.getEndereco().getCidade());
+        cursoMB.setCurso(curso);
+        cursoMB.setTurmas(null);
+        cursoMB.getTurmas();
+        cursoMB.setParamBusca("");
         return "lstpessoa.xhtml";
     }
 
-    public String editarUsuario(Usuario usuario) {
+    public String editarUsuario(Pessoa pessoa) {
+        paramBusca = "";
         novo = false;
-        this.user = usuario;
+        this.pessoa = pessoa;
+        user = pessoa.getUsuario();
+        endereco = pessoa.getEndereco();
+        senhaTmp = user.getSenha();
+        confSenha = user.getSenha();
+        cursoMB.setParamBusca("");
         return "viewusuario.xhtml";
+    }
+
+    public void criar() {
+        if (confSenha != null && user.getSenha() != null && user.getSenha().equals(confSenha)) {
+            if (pessoa.getCodigo() == null) {
+                try {
+                    user.setStatus("Inativo");
+                    user.setLogin(pessoa.getRa());
+                    //seta o perfil como acadêmico por padrão
+                    perfil.setCodigo(2l);
+                    user.setPerfil(perfil);
+                    pessoa.setCpf(cpfTMP.replaceAll("[.-]", ""));
+                    pessoa.setTelefone(telTMP.replaceAll("[()]", ""));
+                    endereco.setCep(cepTMP.replaceAll("[-]", ""));
+                    endereco.setCidade(regiaoMB.getCidade());
+
+                    pessoa.setTurma(turma);
+                    pessoa.setEndereco(endereco);
+                    pessoa.setUsuario(user);
+                    pessoa.getUsuario().setSenha(user.getSenha());
+
+                    pessoadao.iniciarTransacao();
+                    pessoadao.salvar(pessoa);
+                    pessoadao.confirmaTransacao();
+                    ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+                    context.redirect("sucesso.xhtml");
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
+                } catch (Exception ex) {
+                    pessoadao.desfazTransacao();
+                    pessoa.setCodigo(null);
+                    endereco.setCodigo(null);
+                    user.setCodigo(null);
+                    if (turma != null) {
+                        turma.setCodigo(null);
+                    }
+                    logger.error(ex.getMessage(), ex);
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+                }
+            } else {
+                atualizar();
+            }
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "As senhas são diferentes entre si.", null));
+        }
     }
 
     public void atualizar() {
         try {
+            if (turma != null && turma.getCodigo() != null) {
+                pessoa.setTurma(turma);
+            }
+            if (perfil != null && perfil.getCodigo() != null) {
+                user.setPerfil(perfil);
+                pessoa.setUsuario(user);
+            }
+            if (regiaoMB.getCidade() != null && regiaoMB.getCidade().getCodigo() != null) {
+                endereco.setCidade(regiaoMB.getCidade());
+                pessoa.setEndereco(endereco);
+            }
             pessoadao.iniciarTransacao();
             pessoadao.atualizar(pessoa);
             pessoadao.confirmaTransacao();
@@ -245,8 +333,8 @@ public class PessoaManagedBean implements Serializable {
     }
 
     public List<Pessoa> getPessoas() {
-        this.pessoas = pessoadao.buscarTodos();
-        
+        this.consultar();
+
         if (this.pessoas == null) {
             this.pessoas = new ArrayList<Pessoa>();
         }
@@ -254,4 +342,33 @@ public class PessoaManagedBean implements Serializable {
         return pessoas;
     }
 
+    public void salvarUsuario(Pessoa p) {
+        if (confSenha.equals("") && user.getSenha().equals("")) {
+            confSenha = senhaTmp;
+            user.setSenha(confSenha);
+        }
+        criar();
+    }
+
+    public List<Pessoa> consultar() {
+        if (paramBusca == null) {
+            paramBusca = "";
+        }
+        if (paramBusca.equals("")) {
+            pessoas = (List<Pessoa>) pessoadao.buscarTodos();
+        } else {
+            pessoas = (List<Pessoa>) pessoadao.buscarPorNome(paramBusca);
+        }
+
+        if (pessoas.isEmpty()) {
+            pessoas = pessoadao.buscarPorCaractere(paramBusca);
+        }
+        return pessoas;
+    }
+    
+    public void onLoad(){
+        AutenticacaoLogin autLogin = new AutenticacaoLogin();
+        Usuario u = autLogin.getUsuarioLogado();
+        pessoa = pessoadao.buscarPorUsuario(u.getCodigo());
+    }
 }

@@ -1,7 +1,6 @@
 package br.peaa.entidades;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,32 +10,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table (name="CIDADE")
-public class Cidade implements Serializable{
+@Table(name = "CIDADE")
+public class Cidade implements Serializable {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column (name="COD_CIDADE")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "COD_CIDADE")
     private Long codigo;
-    
-    @Column (name = "NOME_CIDADE", length=30, nullable=false)
+
+    @Column(name = "NOME_CIDADE", length = 60, nullable = false)
     private String descricao;
-    
-    @OneToMany (mappedBy = "cidade")
-    private List<Endereco> enderecos;
-    
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name="COD_ESTADO")
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "COD_ESTADO")
     private Estado estado;
 
     public Long getCodigo() {
         return codigo;
     }
- 
+
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
     }
@@ -57,16 +52,6 @@ public class Cidade implements Serializable{
         this.estado = estado;
     }
 
-    public List<Endereco> getEnderecos() {
-        return enderecos;
-    }
-
-    public void setEnderecos(List<Endereco> enderecos) {
-        this.enderecos = enderecos;
-    }
-
-    
-    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -91,9 +76,6 @@ public class Cidade implements Serializable{
 
     @Override
     public String toString() {
-        return "Cidade{" + "estado=" + estado + '}';
+        return descricao;
     }
-    
-    
-    
 }

@@ -2,7 +2,9 @@ package br.peaa.DAO;
 
 import br.peaa.entidades.Entidade;
 import br.peaa.exceptions.ServicoException;
+import java.util.List;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 
 public class EntidadeDAO extends DaoGenerico<Entidade> {
 
@@ -52,5 +54,22 @@ public class EntidadeDAO extends DaoGenerico<Entidade> {
 
     public Entidade buscar(Long codigo) {
         return super.buscarPeloId(codigo);
+    }
+    
+    public List<Entidade> buscarPorNome(String nome) {
+
+        Query qr = HibernateUtil.getInstance().obterSessao().
+                createQuery(" from Entidade e where e.nome = :nome");
+        qr.setParameter("nome", nome);
+
+        return (List<Entidade>) qr.list();
+    }
+
+    public List<Entidade> buscarPorCaractere(String nome) {
+        Query qr = HibernateUtil.getInstance().obterSessao().
+                createQuery(" from Entidade e where upper(e.nome) like upper(:nome)");
+        qr.setParameter("nome", "%" + nome + "%");
+
+        return (List<Entidade>) qr.list();
     }
 }

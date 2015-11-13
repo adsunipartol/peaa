@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Partipantes - <span> #{eventoMB.evento.nome} </span></h2>
         </ui:define>
@@ -15,21 +20,17 @@
                     <h:dataTable value="#{eventoMB.participantesEVT}"
                                  var="p" 
                                  class="table table-bordered" id="datatable">
-                        <h:column> 
-                            <f:facet name="header">CODIGO</f:facet>
-                                #{p.codigo}
-                        </h:column>
                         <h:column>
-                            <f:facet name="header">TIPO</f:facet>
-                                #{p.tipo}
+                            <f:facet name="header">MATRICULA</f:facet>
+                                #{p.ra}
                         </h:column>
                         <h:column>    				
                             <f:facet name="header">NOME</f:facet>    				
                                 #{p.nome}
                         </h:column>
                         <h:column>
-                            <f:facet name="header">MATRICULA</f:facet>
-                                #{p.ra}
+                            <f:facet name="header">TIPO</f:facet>
+                                #{p.tipo}
                         </h:column>
                     </h:dataTable>
                     <!--TABELA DOS EVENTOS-->   

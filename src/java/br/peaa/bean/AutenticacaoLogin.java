@@ -7,11 +7,12 @@ import br.peaa.exceptions.ServicoException;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 @ManagedBean(name = "LoginMB")
-@RequestScoped
+@SessionScoped
 public class AutenticacaoLogin {
 
     private String usuario;
@@ -19,7 +20,8 @@ public class AutenticacaoLogin {
     private final String PRINCIPAL = "index.xhtml";
     private final String LOGIN = "login.xhtml";
     private UsuarioDAO usuariodao;
-    
+    private String pagina;
+
     public AutenticacaoLogin() {
         usuariodao = new UsuarioDAO();
     }
@@ -40,9 +42,19 @@ public class AutenticacaoLogin {
         this.senha = senha;
     }
 
+    public String getPagina() {
+        return pagina;
+    }
+
+    public void setPagina(String pagina) {
+        this.pagina = pagina;
+    }
+    
     public Usuario getUsuarioLogado() {
         HttpSession sessao = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        return (Usuario) sessao.getAttribute("user");
+        Usuario u;
+        u = (Usuario) sessao.getAttribute("user");
+        return u;
     }
 
     public String login() throws ServicoException {
@@ -66,10 +78,9 @@ public class AutenticacaoLogin {
 
     public boolean isAdmin() {
         if (getUsuarioLogado() != null) {
-            for (Perfil p : getUsuarioLogado().getPerfis()) {
-                if (p.getNome().equals("Administrador")) {
-                    return true;
-                }
+            Perfil p = getUsuarioLogado().getPerfil();
+            if (p.getNome().equals("Administrador")) {
+                return true;
             }
         }
         return false;
@@ -77,10 +88,9 @@ public class AutenticacaoLogin {
 
     public boolean isAcademico() {
         if (getUsuarioLogado() != null) {
-            for (Perfil p : getUsuarioLogado().getPerfis()) {
-                if (p.getNome().equals("Academico")) {
-                    return true;
-                }
+            Perfil p = getUsuarioLogado().getPerfil();
+            if (p.getNome().equals("Academico")) {
+                return true;
             }
         }
         return false;
@@ -88,12 +98,31 @@ public class AutenticacaoLogin {
 
     public boolean isCoordenador() {
         if (getUsuarioLogado() != null) {
-            for (Perfil p : getUsuarioLogado().getPerfis()) {
-                if (p.getNome().equals("Coordenador")) {
-                    return true;
-                }
+            Perfil p = getUsuarioLogado().getPerfil();
+            if (p.getNome().equals("Coordenador")) {
+                return true;
             }
         }
         return false;
+    }
+
+    public String controlaAcessoPagina() {
+        pagina = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+        pagina = pagina.replace("/", "");
+        pagina = pagina.replace(".xhtml", "");
+        if (isAcademico()) {
+            if (!pagina.equals("index") && !pagina.equals("mypresencas")) {
+                return "index.xhtml";
+            }
+        } else if (isCoordenador()) {
+            if(pagina.equals("mypresencas")){
+                return "index.xhtml";
+            }
+        } else if (isAdmin()) {
+            if(pagina.equals("mypresencas")){
+                return "index.xhtml";
+            }
+        }
+        return null;
     }
 }

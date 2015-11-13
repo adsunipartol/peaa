@@ -13,7 +13,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 @ManagedBean(name = "eventoMB")
@@ -24,20 +23,21 @@ public class EventoManagedBean implements Serializable {
 
     private Evento evento;
     private List<Evento> eventos;
+    private List<Evento> eventosSelecao;
     private boolean editando;
-    private List<SelectItem> eventosSelecao;
     private String raPessoa;
     private EventoDAO eventodao;
     private PessoaDAO pessoadao;
-
-    private List<Pessoa> participantesEVT = new ArrayList<Pessoa>();
-
+    private List<Pessoa> participantesEVT;
     private List<Curso> listCursos;
+    private String paramBusca;
 
     public EventoManagedBean() {
+        evento = new Evento();
         eventodao = new EventoDAO();
         pessoadao = new PessoaDAO();
-        evento = new Evento();
+        listCursos = new ArrayList<Curso>();
+        paramBusca = "";
     }
 
     public String getRaPessoa() {
@@ -56,6 +56,14 @@ public class EventoManagedBean implements Serializable {
         this.evento = evento;
     }
 
+    public List<Evento> getEventosSelecao() {
+        return eventosSelecao = (List<Evento>) eventodao.buscarTodos();
+    }
+
+    public void setEventosSelecao(List<Evento> eventosSelecao) {
+        this.eventosSelecao = eventosSelecao;
+    }
+
     public List<Curso> getListCursos() {
         return listCursos;
     }
@@ -71,25 +79,38 @@ public class EventoManagedBean implements Serializable {
     public void setEditando(boolean editando) {
         this.editando = editando;
     }
+    
+    public String getParamBusca() {
+        return paramBusca;
+    }
+
+    public void setParamBusca(String paramBusca) {
+        this.paramBusca = paramBusca;
+    }
 
     public String novo() {
+        paramBusca = "";
         evento = new Evento();
+        listCursos = new ArrayList<Curso>();
         return "cadastroevento.xhtml";
     }
 
     public String editar(Evento evento) {
+        paramBusca = "";
         editando = true;
         this.evento = evento;
         if (this.evento.getCursos() == null) {
             this.evento.setCursos(new ArrayList<Curso>());
         }
-
+        listCursos = evento.getCursos();
         return "cadastroevento.xhtml";
     }
 
     public String novaPresenca(Evento evt) {
         this.evento = evt;
-        this.evento.setPessoas(new ArrayList<Pessoa>());
+        if (evento.getPessoas() == null) {
+            this.evento.setPessoas(new ArrayList<Pessoa>());
+        }
         return "regpresenca.xhtml";
     }
 
@@ -103,43 +124,49 @@ public class EventoManagedBean implements Serializable {
             if (raPessoa != null) {
                 Pessoa p = pessoadao.buscarPorRa(raPessoa);
                 if (p != null) {
-                    evento.getPessoas().add(p);
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, " " + p.getNome(), null));
+                    Integer p2 = evento.getPessoas().indexOf(p);
+                    if (p2 == -1) {
+                        evento.getPessoas().add(p);
+                        eventodao.iniciarTransacao();
+                        eventodao.atualizar(evento);
+                        eventodao.confirmaTransacao();
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, " " + p.getNome(), null));
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pessoa já registrada.", null));
+                    }
                 } else {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matricula nÃ£o encontrada", null));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matricula não encontrada.", null));
                 }
-                eventodao.iniciarTransacao();
-                eventodao.atualizar(evento);
-                eventodao.confirmaTransacao();
             }
         } catch (Exception ex) {
             eventodao.desfazTransacao();
             logger.error(ex.getMessage(), ex);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
-
     }
 
     public void criar() {
-        try {
-            if (evento.getCodigo() == null) {
+        if (evento.getCodigo() == null) {
+            try {
                 evento.setCursos(listCursos);
                 eventodao.iniciarTransacao();
                 eventodao.salvar(evento);
                 eventodao.confirmaTransacao();
-            } else {
-                atualizar();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
+            } catch (Exception ex) {
+                eventodao.desfazTransacao();
+                evento.setCodigo(null);
+                logger.error(ex.getMessage(), ex);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
             }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
-        } catch (Exception ex) {
-            eventodao.desfazTransacao();
-            logger.error(ex.getMessage(), ex);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+        } else {
+            atualizar();
         }
     }
 
     public void atualizar() {
         try {
+            evento.setCursos(listCursos);
             eventodao.iniciarTransacao();
             eventodao.atualizar(evento);
             eventodao.confirmaTransacao();
@@ -167,7 +194,8 @@ public class EventoManagedBean implements Serializable {
     }
 
     public List<Evento> getEventos() {
-        this.eventos = eventodao.buscarTodos();
+        this.consultar();
+        
         if (this.eventos == null) {
             this.eventos = new ArrayList<Evento>();
         }
@@ -175,22 +203,28 @@ public class EventoManagedBean implements Serializable {
         return eventos;
     }
 
-    public List<SelectItem> getEventosSelecao() {
-        if (eventosSelecao == null) {
-            eventosSelecao = new ArrayList<SelectItem>();
-            for (Evento e : eventodao.buscarTodos()) {
-                eventosSelecao.add(new SelectItem(e.getCodigo(), e.getNome()));
-            }
-        }
-        return eventosSelecao;
-    }
-
     public List<Pessoa> getParticipantesEVT() throws ServicoException {
-        participantesEVT = pessoadao.buscarPessoaPorEvento(evento.getCodigo());
+        participantesEVT = pessoadao.buscarPessoasPorEvento(evento.getCodigo());
         return participantesEVT;
     }
 
     public void setParticipantesEVT(List<Pessoa> participantesEVT) {
         this.participantesEVT = participantesEVT;
+    }
+    
+    public List<Evento> consultar() {
+        if (paramBusca == null) {
+            paramBusca = "";
+        }
+        if (paramBusca.equals("")) {
+            eventos = (List<Evento>) eventodao.buscarTodos();
+        } else {
+            eventos = (List<Evento>) eventodao.buscarPorNome(paramBusca);
+        }
+
+        if (eventos.isEmpty()) {
+            eventos = eventodao.buscarPorCaractere(paramBusca);
+        }
+        return eventos;
     }
 }

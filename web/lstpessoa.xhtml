@@ -5,6 +5,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <ui:composition template="layout/layout.xhtml">
+        <f:metadata>
+            <!--Verifica o acesso à página-->
+            <f:viewAction action="#{LoginMB.controlaAcessoPagina()}" />
+        </f:metadata>
+        
         <ui:define name="tela">
             <h2>Editar Pessoa <span> - #{pessoaMB.pessoa.nome} </span></h2>
         </ui:define>
@@ -20,20 +25,28 @@
                 };
             </script>
             <h:form style="margin-bottom: 0px !important;" class="form-horizontal">
+                <!--ENTRADA PARA TIPO-->
                 <div class="form-group">
                     <h:outputText styleClass="col-sm-3 control-label" value="TIPO"></h:outputText>
-                    <div class="col-sm-4">
-                        <h:inputText styleClass="form-control" disabled="true" value="#{pessoaMB.pessoa.tipo}"  rendered="true" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <h:outputText styleClass="col-sm-3 control-label" value="PERFIL"></h:outputText>
-                    <h:selectOneMenu value="#{pessoaMB.perfil.codigo}">
-                        <f:selectItem itemValue="" itemLabel="Selecione..."/>
-                        <f:selectItems value="#{perfilMB.perfisSelecao}"/>
+                    <h:selectOneMenu id="tipo" value="#{pessoaMB.pessoa.tipo}" >
+                        <f:selectItem itemValue="" itemLabel="Selecione..." />
+                        <f:selectItem itemValue="Academico" itemLabel="Academico" />
+                        <f:selectItem itemValue="Professor" itemLabel="Professor" />
+                        <f:selectItem itemValue="Ministrante" itemLabel="Ministrante" />
                     </h:selectOneMenu>
                 </div>
                 <!--FIM-->
+                
+                <!--ENTRADA PARA PERFIL-->
+                <div class="form-group">
+                    <h:outputText styleClass="col-sm-3 control-label" value="PERFIL"></h:outputText>
+                    <h:selectOneMenu value="#{pessoaMB.perfil}" converter="converterPerfil">
+                        <f:selectItem itemValue="" itemLabel="Selecione..."/>
+                        <f:selectItems value="#{perfilMB.perfis}"/>
+                    </h:selectOneMenu>
+                </div>
+                <!--FIM-->
+                
                 <!--Entrada Para NOME-->
                 <div class="form-group">
                     <h:outputText styleClass="col-sm-3 control-label" value="NOME *"></h:outputText>
@@ -66,7 +79,7 @@
                     <h:outputText styleClass="col-sm-3 control-label" value="CPF *"></h:outputText>
                     <div class="col-sm-5">
                         <h:inputText styleClass="form-control" id="cpf" required="true" requiredMessage="O campo [CPF] é obrigatório" value="#{pessoaMB.pessoa.cpf}">
-                            <f:validator validatorId="cpfValidator"/>
+                            <!--<f:validator validatorId="cpfValidator"/>-->
                         </h:inputText>
                     </div>
                 </div>
@@ -97,7 +110,7 @@
                     <h:outputText styleClass="col-sm-3 control-label" value="EMAIL *"></h:outputText>
                     <div class="col-sm-5">
                         <h:inputText styleClass="form-control" required="true" requiredMessage="O campo [EMAIL] é obrigatório" value="#{pessoaMB.pessoa.email}">
-                            <f:validator validatorId="emailValidator"/>
+                            <!--<f:validator validatorId="emailValidator"/>-->
                         </h:inputText>
                     </div>
                 </div>
@@ -106,10 +119,10 @@
                 <!--ENTRADA PARA CURSO-->
                 <div class="form-group">
                     <h:outputText styleClass="col-sm-3 control-label" value="CURSO"></h:outputText>
-                    <h:selectOneMenu value="#{CursoMB.curso.codigo}" style="height:20px">
+                    <h:selectOneMenu value="#{CursoMB.curso}" style="height:20px" converter="converterCurso">
                         <f:selectItem itemValue="" itemLabel="Selecione..."/>
                         <f:selectItems value="#{CursoMB.cursos}"/>
-                        <f:ajax event="change" render="turma"  listener="#{CursoMB.buscarTurmasPorCurso()}"/>
+                        <f:ajax event="change" render="turma"  listener="#{CursoMB.setTurmas(null)}"/>
                     </h:selectOneMenu>
                 </div>
                 <!--FIM-->
@@ -126,10 +139,10 @@
                 <!--ENTRADA PARA UF-->
                 <div class="form-group">    
                     <h:outputText styleClass="col-sm-3 control-label" value="ESTADO"></h:outputText>
-                    <h:selectOneMenu id="estado" value="#{RegiaoMB.estado.codigo}" >
+                    <h:selectOneMenu id="estado" value="#{RegiaoMB.estado}" converter="converterEstado">
                         <f:selectItem itemValue="" itemLabel="Selecione..." />
-                        <f:selectItems value="#{RegiaoMB.buscarEstados()}"/>
-                        <f:ajax event="change" render="cidade"  listener="#{RegiaoMB.limparCidades()}"/>
+                        <f:selectItems value="#{RegiaoMB.estados}"/>
+                        <f:ajax event="change" render="cidade"  listener="#{RegiaoMB.setCidades(null)}"/>
                     </h:selectOneMenu>
                 </div>
                 <!--FIM-->
@@ -137,7 +150,7 @@
                 <!--ENTRADA PARA CIDADE-->
                 <div class="form-group">
                     <h:outputText styleClass="col-sm-3 control-label" value="CIDADE"></h:outputText>
-                    <h:selectOneMenu id="cidade" value="#{pessoaMB.endereco.cidade}">
+                    <h:selectOneMenu id="cidade" value="#{RegiaoMB.cidade}" converter="converterCidade">
                         <f:selectItem itemValue="" itemLabel="Selecione..." />
                         <f:selectItems value="#{RegiaoMB.cidades}"/>
                     </h:selectOneMenu>

@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 @ManagedBean(name = "perfilMB")
@@ -21,13 +19,13 @@ public class PerfilManagedBean implements Serializable {
 
     private Perfil perfil;
     private List<Perfil> perfis;
-    private List<SelectItem> perfisSelecao;
     private boolean novo;
     private PerfilDAO perfildao;
 
     public PerfilManagedBean() {
-        this.novo = true;
         perfil = new Perfil();
+        perfis = new ArrayList<Perfil>();
+        this.novo = true;
         perfildao = new PerfilDAO();
     }
 
@@ -59,6 +57,7 @@ public class PerfilManagedBean implements Serializable {
             novo = false;
         } catch (Exception ex) {
             perfildao.desfazTransacao();
+            perfil.setCodigo(null);
             logger.error(ex.getMessage(), ex);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
@@ -105,19 +104,4 @@ public class PerfilManagedBean implements Serializable {
         }
         return perfis;
     }
-
-    public List<SelectItem> getPerfisSelecao() {
-        if (perfisSelecao == null) {
-            perfisSelecao = new ArrayList<SelectItem>();
-            for (Perfil p : perfildao.buscarTodos()) {
-                perfisSelecao.add(new SelectItem(p.getCodigo(), p.getNome()));
-            }
-        }
-        return perfisSelecao;
-    }
-
-    public void setPerfisSelecao(List<SelectItem> perfisSelecao) {
-        this.perfisSelecao = perfisSelecao;
-    }
-
 }

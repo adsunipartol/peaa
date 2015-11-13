@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -60,7 +61,7 @@ public class SubEventoManagedBean implements Serializable {
     }
 
     public void criar() {
-        try{
+        try {
             subevento.setEvento(eventoCurso);
             subeventodao.iniciarTransacao();
             subeventodao.salvar(subevento);
@@ -68,6 +69,8 @@ public class SubEventoManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Gravado com sucesso", null));
         } catch (Exception ex) {
             subeventodao.desfazTransacao();
+            eventoCurso.setCodigo(null);
+            subevento.setCodigo(null);
             logger.error(ex.getMessage(), ex);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
@@ -75,6 +78,7 @@ public class SubEventoManagedBean implements Serializable {
 
     public String editar(SubEvento subevento) {
         novo = false;
+        this.eventoCurso = subevento.getEvento();
         this.subevento = subevento;
         return "cadsubevento.xhtml";
     }
@@ -124,6 +128,5 @@ public class SubEventoManagedBean implements Serializable {
             }
         }
         return subeventosSelecao;
-
     }
 }

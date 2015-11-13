@@ -9,9 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -44,7 +43,7 @@ public class Pessoa implements Serializable {
     @Column(length= 11, nullable=false, unique = true)
     private String cpf;
    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pessoas")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "pessoas")
     private List<Evento> eventos;
     
     @OneToOne (cascade = CascadeType.ALL)
@@ -53,12 +52,11 @@ public class Pessoa implements Serializable {
     @Column(length= 10, nullable=false)
     private String tipo;
     
-    
     @Column(length= 30, nullable=false)
     private String email;
     
-    @ManyToMany (cascade = CascadeType.ALL, mappedBy = "pessoas")
-    private List<Turma> turma;
+    @ManyToOne (cascade = CascadeType.PERSIST)
+    private Turma turma;
     
     @Column(length= 15, nullable=false)
     private String telefone;
@@ -70,16 +68,14 @@ public class Pessoa implements Serializable {
         return codigo;
     }
 
-    public List<Turma> getTurma() {
+    public Turma getTurma() {
         return turma;
     }
 
-    public void setTurma(List<Turma> turma) {
+    public void setTurma(Turma turma) {
         this.turma = turma;
     }
     
-    
-
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
     }
@@ -100,8 +96,6 @@ public class Pessoa implements Serializable {
         this.ra = ra;
     }
     
-    
-
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
@@ -202,8 +196,4 @@ public class Pessoa implements Serializable {
     public String toString() {
         return "Pessoa{" + "dtNascimento=" + dtNascimento + '}';
     }
-    
-    
-
-
 }

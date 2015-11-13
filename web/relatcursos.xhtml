@@ -23,9 +23,9 @@
                 <div class="form-group">
                     <h:outputText class="col-cad-evento control-label" style="float: left; width: 15%" value="ENTIDADE"></h:outputText>
                     <div class="col-sm-5">
-                        <h:selectOneMenu>
+                        <h:selectOneMenu converter="converterEntidade">
                             <f:selectItem itemLabel="--Todas--"/>
-                            <f:selectItems value="#{entidadeMB.entidades}"/>
+                            <f:selectItems value="#{entidadeMB.entidadesSelecao}"/>
                         </h:selectOneMenu>
                     </div>
 

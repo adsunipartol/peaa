@@ -28,12 +28,12 @@ public class Evento implements Serializable {
 
     @Column(length = 30, nullable = false)
     private String nome;
-    
+
     @Column(length = 20, nullable = false)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dataEvento;
-    
-    @Column (length = 20, nullable = false)
+
+    @Column(length = 20, nullable = false)
     private String status;
 
     @Column(length = 30, nullable = false)
@@ -42,43 +42,38 @@ public class Evento implements Serializable {
     @Column(length = 30, nullable = false)
     private String descricao;
 
-    @Column (length = 30, nullable = false)
+    @Column(length = 30, nullable = false)
     private String ministrante;
-    
+
     //Cardinalidade muitos para muitos entre EVENTO E CURSO
     @ManyToMany
     @JoinTable(name = "eventos_curso",
             joinColumns
             = @JoinColumn(name = "cod_evento",
-                    referencedColumnName = "codigo",
-                    unique = true),
+                    referencedColumnName = "codigo"),
             inverseJoinColumns
             = @JoinColumn(name = "cod_curso",
-                    referencedColumnName = "codigo",
-                    unique = true))
+                    referencedColumnName = "codigo"))
     private List<Curso> cursos;
 
-    @OneToMany(mappedBy = "evento")
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
     private List<SubEvento> subeventos;
-    
 
     @Column(length = 30, nullable = false)
     private Float custo;
 
-//    Cardinalidade muitos para muitos entre EVENTO E PESSOA
+    //Cardinalidade muitos para muitos entre EVENTO E PESSOA
     @ManyToMany
-    @JoinTable(name = "eventos_pessoa",
+    @JoinTable(name = "presenca_evento",
             joinColumns
             = @JoinColumn(name = "cod_evento",
-                    referencedColumnName = "codigo",
-                    unique = true),
+                    referencedColumnName = "codigo"),
             inverseJoinColumns
             = @JoinColumn(name = "cod_pessoa",
-                    referencedColumnName = "codigo",
-                    unique = true))
+                    referencedColumnName = "codigo"))
     private List<Pessoa> pessoas;
-    
-    public Evento(){
+
+    public Evento() {
 
     }
 
@@ -97,8 +92,7 @@ public class Evento implements Serializable {
     public void setSubeventos(List<SubEvento> subeventos) {
         this.subeventos = subeventos;
     }
-    
-    
+
     public Long getCodigo() {
         return codigo;
     }
@@ -123,8 +117,6 @@ public class Evento implements Serializable {
         this.pessoas = pessoas;
     }
 
-    
-    
     public String getMinistrante() {
         return ministrante;
     }
@@ -132,8 +124,7 @@ public class Evento implements Serializable {
     public void setMinistrante(String ministrante) {
         this.ministrante = ministrante;
     }
-    
-   
+
     public Date getData() {
         return dataEvento;
     }
@@ -153,7 +144,6 @@ public class Evento implements Serializable {
     public void setLocalEvento(String localEvento) {
         this.localEvento = localEvento;
     }
-    
 
     public void setData(Date data) {
         this.dataEvento = data;
@@ -183,8 +173,6 @@ public class Evento implements Serializable {
         this.cursos = cursos;
     }
 
-
-
     public Float getCusto() {
         return custo;
     }
@@ -192,7 +180,6 @@ public class Evento implements Serializable {
     public void setCusto(Float custo) {
         this.custo = custo;
     }
-
 
     @Override
     public int hashCode() {
@@ -215,5 +202,9 @@ public class Evento implements Serializable {
         }
         return true;
     }
-
+    
+    @Override
+    public String toString(){
+        return nome;
+    }
 }

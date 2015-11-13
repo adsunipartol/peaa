@@ -1,18 +1,14 @@
 package br.peaa.entidades;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -27,36 +23,25 @@ public class Usuario implements Serializable {
 
     @Column(length = 15, nullable = false)
     private String login;
-    
-    @Column (length = 30, nullable = true)
+
+    @Column(length = 30, nullable = true)
     private String status;
 
-    @ManyToMany (fetch = FetchType.EAGER)
-    @JoinTable(name = "perfil_de_usuario",
-            joinColumns
-            = @JoinColumn(name = "cod_usuario",
-                    referencedColumnName = "codigo",
-                    unique = true),
-            inverseJoinColumns
-            = @JoinColumn(name = "cod_perfil",
-                    referencedColumnName = "codigo",
-                    unique = true))
-    private List<Perfil> perfis;
+    @ManyToOne
+    @JoinColumn(name = "cod_perfil")
+    private Perfil perfil;
 
     @Column(length = 10, nullable = false)
     private String senha;
 
-   @OneToOne
-   private Pessoa pessoa;
-    
-    public Usuario (){
-        
+    public Usuario() {
+
     }
-    
-    public Usuario (String login){
+
+    public Usuario(String login) {
         this.login = login;
     }
-    
+
     public Usuario(Long codigo, String login, String senha) {
         this.codigo = codigo;
         this.login = login;
@@ -71,12 +56,9 @@ public class Usuario implements Serializable {
         this.status = status;
     }
 
-    
-    
     public Long getCodigo() {
         return codigo;
     }
-    
 
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
@@ -90,12 +72,12 @@ public class Usuario implements Serializable {
         this.login = login;
     }
 
-    public List<Perfil> getPerfis() {
-        return perfis;
+    public Perfil getPerfil() {
+        return perfil;
     }
 
-    public void setPerfis(List<Perfil> perfis) {
-        this.perfis = perfis;
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 
     public String getSenha() {
@@ -105,16 +87,6 @@ public class Usuario implements Serializable {
     public void setSenha(String senha) {
         this.senha = senha;
     }
-
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
-
-    
 
     @Override
     public int hashCode() {
@@ -134,5 +106,4 @@ public class Usuario implements Serializable {
         final Usuario other = (Usuario) obj;
         return Objects.equals(this.codigo, other.codigo);
     }
-
 }

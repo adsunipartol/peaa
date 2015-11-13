@@ -71,6 +71,7 @@ public class UsuarioManagedBean implements Serializable {
             }
         } catch (Exception ex) {
             usuariodao.desfazTransacao();
+            usuario.setCodigo(null);
             logger.error(ex.getMessage(), ex);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }

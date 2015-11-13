@@ -10,28 +10,27 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
 @Entity
-@Table (name="SUBEVENTO")
-public class SubEvento implements Serializable{
-    
+@Table(name = "SUBEVENTO")
+public class SubEvento implements Serializable {
+
     @Id
     @SequenceGenerator(name = "SEQ_SUBEVT", sequenceName = "SEQ_SUBEVT")
     @GeneratedValue(generator = "SEQ_SUBEVT")
     private Long codigo;
-    
-    @Column (length=30, nullable=false)
+
+    @Column(length = 30, nullable = false)
     private String nome;
-    
-    @Column (length=30, nullable=false)
+
+    @Column(length = 30, nullable = false)
     private String modulo;
-    
+
     @ManyToOne
     private Evento evento;
-    
-    @Column (length = 100, nullable=false)
+
+    @Column(length = 100, nullable = false)
     private String ministrante;
-    
+
     public Long getCodigo() {
         return codigo;
     }
@@ -71,9 +70,7 @@ public class SubEvento implements Serializable{
     public void setMinistrante(String ministrante) {
         this.ministrante = ministrante;
     }
-    
 
-    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -95,8 +92,4 @@ public class SubEvento implements Serializable{
         }
         return true;
     }
-    
-    
-    
-    
 }
