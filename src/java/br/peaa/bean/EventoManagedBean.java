@@ -130,12 +130,12 @@ public class EventoManagedBean implements Serializable {
                         eventodao.iniciarTransacao();
                         eventodao.atualizar(evento);
                         eventodao.confirmaTransacao();
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, " " + p.getNome(), null));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Presença registrada para:\n " + p.getNome(), null));
                     } else {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pessoa já registrada.", null));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Presença já registrada para:\n " + p.getNome() + ".", null));
                     }
                 } else {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matricula não encontrada.", null));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Não foi encontrada pessoa com a matricula " + raPessoa + ".", null));
                 }
             }
         } catch (Exception ex) {
